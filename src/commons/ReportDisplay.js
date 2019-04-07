@@ -31,12 +31,13 @@ export default class ReportDispaly extends Component{
 	    			width: '100%',
 	    			position:'absolute',
 	    			top: '94.5%',
-	    			backgroundColor: '#ba0bc6',
+	    			backgroundColor: '#2f34a3',
 	    			fontSize: 14,
 	    			color: '#000',
 	    			fontWeight: 'bold',
 	    			textAlign: 'center',
-	    			textAlignVertical: 'center'
+	    			textAlignVertical: 'center',
+	    			elevation: 11
 	    	}}>
 	    		{this.props.reportMessage}
 	    	</Text>

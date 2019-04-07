@@ -26,33 +26,48 @@ import Constants from '../commons/Constants.js';
 
 export default class LoginPage extends Component{
 
+	state = {
+		loginUsername : '',
+		loginPassword : ''
+	}
+
+	submitLogin = ()=>{
+		if(this.state.loginUsername.length == 0 ||
+			this.state.loginPassword.length == 0){
+
+			this.props.doSendAReportMessage('Please fill in username or password fields');
+			setTimeout(()=>{
+				this.props.doSendAReportMessage('');
+			},Constants.REPORT_DISPLAY_TIME);
+		}
+		else{
+			this.props.doSendAReportMessage('Submitting, Please wait...');
+			const loginData = {
+				username : this.state.loginUsername,
+				password : this.state.loginPassword
+			}
+			this.props.doSubmitLoginInput(loginData);
+		}
+		
+	}
+
 	render() {
 	    return (
 	    	<React.Fragment>
-	    		<Image 
-					source={require('../img/content/content_2.jpg')}
-		    		style={{
-		    			height:'100%',
-		    			width: '100%',
-		    			position: 'absolute',
-		    			resizeMode:'stretch'
-		    		}}/>
-		    	<View style={{
-		    				height: '91%',
-		    				top:'9%',
-		    				width: '100%',
-		    				position: 'absolute',
-		    				backgroundColor: '#fff',
-		    				opacity: 0.7
-		    		}}>
-
-		    	</View>
-
+	    		<View style = {{
+	    				height: '100%',
+	    				width: '100%',
+	    				position: 'relative',
+	    				position: 'absolute',
+	    				backgroundColor: '#fff'
+	    		}}>
+	    		</View>
+	    		
 		    	<View style={{
 		    				height: '9%',
 		    				width: '100%',
 		    				position: 'absolute',
-		    				backgroundColor: '#ba0bc6'
+		    				backgroundColor: '#555dff'
 		    		}}>
 		    			<TouchableWithoutFeedback
 		    				onPress={()=>this.props.doChangeMainAppDisplay(Constants.APP_PAGES.FIND_RESTAURANT_APP)}>
@@ -75,146 +90,175 @@ export default class LoginPage extends Component{
 			    		</TouchableWithoutFeedback>
 		    	</View>
 
-
-		    	<View 	style={{
-		    				height: '100%',
-		    				width: '100%',
-		    				position:'relative'
+		    	<View style={{
+		    			height: '100%',
+		    			width: '100%',
+		    			position: 'relative',
+		    			alignItems: 'center'
 		    	}}>
-		    			<Text style={{
-		    					height: '9%',
-		    					width: '55%',
-		    					position: 'relative',
-		    					left: '22.25%',
-		    					top: '15%',
-		    					borderWidth: 2,
-		    					fontWeight: 'bold',
-		    					fontSize: 20,
-		    					color: '#000',
-		    					textAlign: 'center',
-		    					textAlignVertical: 'center',
-		    					color: '#ba0bc6',
-		    					borderRadius: 100
-		    			}}>
-		    				LOGIN-PAGE
-		    			</Text>
+		    		<Text style={{
+		    				height: '10%',
+		    				width: '100%',
+		    				position: 'relative',
+		    				textAlignVertical:'center',
+		    				textAlign: 'center',
+		    				fontSize: 25,
+		    				fontWeight: 'bold',
+		    				top: '13%',
+		    				color: '#000'
+		    		}}>
+		    			<Icon
+		    				style={{fontSize:35,color: '#000'}}
+		    				name = 'login-variant'
+		    				type = 'MaterialCommunityIcons'/>
+		    			<Icon
+		    				style={{fontSize:35,color: '#000'}}
+		    				name = 'user'
+		    				type = 'FontAwesome'/>{' LOGIN'}
 
+		    		</Text>
+
+		    		<View style={{
+		    				borderWidth: 1.2,
+						    borderColor: '#ddd',
+						    borderBottomWidth: 0,
+						    shadowColor: '#000',
+						    shadowOffset: {
+								width: 0,
+								height: 5,
+							},
+							shadowOpacity: 0.34,
+							shadowRadius: 6.27,
+							elevation: 10,
+						    backgroundColor: '#fff',
+		    				height: '60%',
+		    				width:'90%',
+		    				position: 'relative',
+		    				elevation: 11,
+							top: '17%',
+						    alignItems: 'center',
+						    paddingTop: '5%',
+						    borderRadius: 25
+		    		}}>
 		    			<Text style={{
-		    					height: '4%',
-		    					width: '33%',
+		    					height: '15%',
+		    					width: '75%',
 		    					position: 'relative',
-		    					left: '10%',
+		    					textAlignVertical: 'center',
 		    					fontSize: 15,
-		    					color: '#000',
-		    					top: '25%',
-		    					fontWeight: 'bold'
+		    					fontWeight: 'bold',
+		    					color: '#686868'
 		    			}}>
 		    				USERNAME
 		    			</Text>
-
 		    			<View style={{
-		    					height: '9%',
+		    					height: '15%',
+		    					width: '75%',
 		    					position: 'relative',
-		    					top: '45%',
-		    					flexDirection: 'row'
+		    					flexDirection:'row',
+		    					justfiyContent:'center'
 		    			}}>
 		    				<Text style={{
-		    						height:'100%',
-		    						width: '15%',
-		    						left: '40%',
-		    						position: 'relative',
-		    						textAlignVertical: 'center',
-		    						textAlign: 'center'
-		    				}}>	
-		    					<Icon
-		    						style = {{
-		    							fontSize: 35,
-		    							color: '#ba0bc6'
-		    						}} 
-		    						name  = 'user'
-		    						type  = 'FontAwesome'/>
-		    				</Text>
-
-		    				<TextInput
-		    					placeholder = 'FILL IN USERNAME' 
-		    					style       = {{
 		    						height: '100%',
-		    						color: '#000',
-		    						width: '60%',
-		    						position: 'relative',
-		    						left: '43%',
-		    						borderBottomWidth: 3,
-		    						borderColor: '#ba0bc6' 
-		    					}}/>
-
+		    						width:'23%',
+		    						position:'relative',
+		    						textAlignVertical:'center',
+		    						textAlign:'center'
+		    				}}>
+		    					<Icon
+		    						style={{fontSize:25}}
+		    						name = 'user-circle-o'
+		    						type = 'FontAwesome'/>
+		    				</Text>
+		    				<TextInput
+		    					placeholder = 'INPUT USERNAME'
+			    				style={{
+			    					height: '100%',
+			    					width: '77%',
+			    					position: 'relative',
+			    					borderBottomWidth:2,
+			    					textAlignVertical:'center'
+			    				}}
+			    				onChangeText={(loginUsername)=>this.setState({loginUsername})}/>
 		    			</View>
-
 		    			<Text style={{
-		    					height: '4%',
-		    					width: '33%',
+		    					height: '15%',
+		    					width: '75%',
 		    					position: 'relative',
-		    					left: '10%',
+		    					textAlignVertical: 'center',
 		    					fontSize: 15,
-		    					color: '#000',
-		    					top: '35%',
-		    					fontWeight: 'bold'
+		    					fontWeight: 'bold',
+		    					color: '#686868',
+		    					top: '10%'
 		    			}}>
 		    				PASSWORD
 		    			</Text>
-
 		    			<View style={{
-		    					height: '9%',
+		    					height: '15%',
+		    					width: '75%',
 		    					position: 'relative',
-		    					top: '55%',
-		    					flexDirection: 'row'
+		    					flexDirection:'row',
+		    					justfiyContent:'center',
+		    					top: '10%'
 		    			}}>
 		    				<Text style={{
-		    						height:'100%',
-		    						width: '15%',
-		    						left: '40%',
-		    						position: 'relative',
-		    						textAlignVertical: 'center',
-		    						textAlign: 'center'
-		    				}}>	
-		    					<Icon
-		    						style = {{
-		    							fontSize: 35,
-		    							color: '#ba0bc6'
-		    						}} 
-		    						name  = 'lock'
-		    						type  = 'FontAwesome'/>
-		    				</Text>
-
-		    				<TextInput	
-		    					secureTextEntry={true}
-		    					placeholder    = '*********'
-		    					style          = {{
 		    						height: '100%',
-		    						width: '60%',
-		    						position: 'relative',
-		    						left: '43%',
-		    						borderBottomWidth: 3,
-		    						borderColor: '#ba0bc6' 
-		    					}}/>
+		    						width:'23%',
+		    						position:'relative',
+		    						textAlignVertical:'center',
+		    						textAlign:'center'
+		    				}}>
+		    					<Icon
+		    						style={{fontSize:25}}
+		    						name = 'lock'
+		    						type = 'Entypo'/>
+		    				</Text>
+		    				<TextInput
+		    					secureTextEntry={true}
+		    					placeholder = '********'
+			    				style={{
+			    					height: '100%',
+			    					width: '77%',
+			    					position: 'relative',
+			    					borderBottomWidth:2,
+			    					textAlignVertical:'center'
+			    				}}
+			    				onChangeText={(loginPassword)=>this.setState({loginPassword})}/>
 		    			</View>
-
-		    			<Text style={{
-		    					height: '9%',
-		    					textAlignVertical: 'center',
-		    					textAlign: 'center',
-		    					top: '45%',
-		    					position: 'relative',
-		    					width: '30%',
-		    					color: '#000',
-		    					fontSize: 15,
-		    					borderWidth: 3,
-		    					fontWeight: 'bold',
-		    					left: '35%',
-		    					color: '#ba0bc6' 
-		    			}}>
-		    				LOGIN
-		    			</Text>
+		    			<TouchableWithoutFeedback
+		    				onPress={()=>this.submitLogin()}>
+			    			<Text style={{
+			    					height: '20%',
+			    					width:'50%',
+			    					position:'relative',
+			    					textAlignVertical:'center',
+			    					textAlign:'center',
+			    					borderRadius: 100,
+			    					fontWeight:'bold',
+			    					borderWidth: 2,
+			    					borderColor: '#000',
+			    					color: '#000',
+			    					top: '18%',
+			    					borderWidth: 1.2,
+								    borderColor: '#ddd',
+								    borderBottomWidth: 0,
+								    shadowColor: '#000',
+								    shadowOffset: {
+										width: 0,
+										height: 5,
+									},
+									shadowOpacity: 0.34,
+									shadowRadius: 6.27,
+									elevation: 10,
+								    backgroundColor: '#fff',
+								    fontSize: 18
+			    			}}>
+			    				Submit
+			    			</Text>
+			    		</TouchableWithoutFeedback>
+		    		</View>	
 		    	</View>
+		    	
 		    </React.Fragment>
 	    );
   	}

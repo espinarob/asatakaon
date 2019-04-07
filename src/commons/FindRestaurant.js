@@ -23,13 +23,29 @@ import {Marker}      from 'react-native-maps';
 /* -- Custom Components  -- */
 
 import Constants from './Constants.js';
+const anonymousUserIcon = require('../img/icon/anonymous-user.png');
 
 
 export default class FindRestaurant extends Component{
 
+	state  = {
+		tracksViewChanges: true
+	}
+
+
+	onLoadIcon = ()=>{
+		if(anonymousUserIcon){
+			setTimeout(()=>{
+				this.setState({tracksViewChanges:false});
+				console.log('set to false');
+			},1500);
+		}
+	}
+
+
 	getMapDisplay = ()=>{
-		if(this.props.doGetUsersLocation.length!=0){
-			return	<MapView style = {{height:'100%',width: '100%'}}
+		if(this.props.doGetUsersLocation.latitude){
+			return	<MapView style = {{height:'100%',width: '100%',borderRadius:20}}
 						provider={MapView.PROVIDER_GOOGLE}
 			            region = {{
 			                latitude       : this.props.doGetUsersLocation.latitude,
@@ -37,11 +53,20 @@ export default class FindRestaurant extends Component{
 			                latitudeDelta  : 0.0922*6,
 			                longitudeDelta : 0.0421*6,
 		                }}>
-		                <Marker
-				      		coordinate={{latitude:this.props.doGetUsersLocation.latitude,
+		                 <Marker
+		                 	tracksViewChanges = {false}
+					      	coordinate={{latitude:this.props.doGetUsersLocation.latitude,
 				      			longitude:this.props.doGetUsersLocation.longitude}}
-					      	title={'Hello user!'}
-					      	description={'Here is your location'}/>
+				      		tracksViewChanges={this.state.tracksViewChanges}
+					      	title={'Hello Anonymous!'}
+					      	description={'Here is your location, register now!'}>
+
+					      	<Image
+					      		onLoad={this.onLoadIcon}
+					      		source={anonymousUserIcon}
+					      		style={{height:35,width:35}}/>
+					    </Marker>
+
         			</MapView>
 		}
 		else{
@@ -64,30 +89,11 @@ export default class FindRestaurant extends Component{
 	render() {
 	    return (
 	    	<React.Fragment>
-	    		<Image 
-					source={require('../img/content/content_2.jpg')}
-		    		style={{
-		    			height:'100%',
-		    			width: '100%',
-		    			position: 'absolute',
-		    			resizeMode:'stretch'
-		    		}}/>
-		    	<View style={{
-		    				height: '91%',
-		    				top:'9%',
-		    				width: '100%',
-		    				position: 'absolute',
-		    				backgroundColor: '#fff',
-		    				opacity: 0.4
-		    		}}>
-
-		    	</View>
-
 		    	<View style={{
 		    				height: '9%',
 		    				width: '100%',
 		    				position: 'absolute',
-		    				backgroundColor: '#ba0bc6'
+		    				backgroundColor: '#555dff'
 		    		}}>
 		    			<TouchableWithoutFeedback
 		    				onPress={()=>this.props.doChangeMainAppDisplay(Constants.APP_PAGES.WELCOME_APP_PAGE)}>
@@ -116,20 +122,32 @@ export default class FindRestaurant extends Component{
 		    				width: '100%'
 		    	}}>
 		    		<View style={{
-		    				height: '73%',
-		    				width:'100%',
-		    				position: 'absolute',
-		    				top: '22%',
-		    				opacity: 0.9,
-		    				backgroundColor:'#fff'
+						    backgroundColor: '#fff',
+		    				height:'91%',
+		    				top: '9%',
+		    				width: '100%',
+		    				position: 'relative',
 		    		}}>
-
+		    			{this.getMapDisplay()}
 		    		</View>
+
 		    		<TouchableWithoutFeedback
 		    			onPress={()=>this.props.doChangeMainAppDisplay(Constants.APP_PAGES.LOGIN_APP_PAGE)}>
 		    			<Text style={{
-		    					height: '12.5%',
-		    					width: '20.8%',
+		    					borderWidth: 1.2,
+							    borderColor: '#ddd',
+							    borderBottomWidth: 0,
+							    shadowColor: '#000',
+							    shadowOffset: {
+									width: 0,
+									height: 5,
+								},
+								shadowOpacity: 0.34,
+								shadowRadius: 6.27,
+								elevation: 10,
+							    backgroundColor: '#fff',
+		    					height:74,
+		    					width: 74,
 		    					borderRadius: 100,
 		    					position:'absolute',
 		    					left: '76%',
@@ -137,9 +155,7 @@ export default class FindRestaurant extends Component{
 		    					fontWeight: 'bold',
 		    					textAlign: 'center',
 		    					textAlignVertical: 'center',
-		    					backgroundColor: '#ba0bc6',
-		    					borderColor: '#fff',
-		    					borderWidth:3,
+		    					backgroundColor: '#fff',
 		    					color: '#000',
 		    					fontSize: 12
 		    			}}>
@@ -157,8 +173,20 @@ export default class FindRestaurant extends Component{
 		    		<TouchableWithoutFeedback
 		    			onPress={()=>this.props.doChangeMainAppDisplay(Constants.APP_PAGES.SIGN_APP_PAGE)}>
 		    			<Text style={{
-		    					height: '12.5%',
-		    					width: '20.8%',
+		    					borderWidth: 1.2,
+							    borderColor: '#ddd',
+							    borderBottomWidth: 0,
+							    shadowColor: '#000',
+							    shadowOffset: {
+									width: 0,
+									height: 5,
+								},
+								shadowOpacity: 0.34,
+								shadowRadius: 6.27,
+								elevation: 10,
+							    backgroundColor: '#fff',
+		    					height:74,
+		    					width: 74,
 		    					borderRadius: 100,
 		    					position:'absolute',
 		    					left: '53.7%',
@@ -166,9 +194,7 @@ export default class FindRestaurant extends Component{
 		    					fontWeight: 'bold',
 		    					textAlign: 'center',
 		    					textAlignVertical: 'center',
-		    					backgroundColor: '#ba0bc6',
-		    					borderColor: '#fff',
-		    					borderWidth:3,
+		    					backgroundColor: '#fff',
 		    					color: '#000',
 		    					fontSize: 12
 		    			}}>
@@ -186,8 +212,20 @@ export default class FindRestaurant extends Component{
 		    		<TouchableWithoutFeedback
 		    			onPress={()=>this.props.doChangeMainAppDisplay(Constants.APP_PAGES.SIGN_RESTAURANT)}>
 		    			<Text style={{
-		    					height: '12.5%',
-		    					width: '20.8%',
+		    					borderWidth: 1.2,
+							    borderColor: '#ddd',
+							    borderBottomWidth: 0,
+							    shadowColor: '#000',
+							    shadowOffset: {
+									width: 0,
+									height: 5,
+								},
+								shadowOpacity: 0.34,
+								shadowRadius: 6.27,
+								elevation: 10,
+							    backgroundColor: '#fff',
+		    					height:74,
+		    					width: 74,
 		    					borderRadius: 100,
 		    					position:'absolute',
 		    					left: '31%',
@@ -195,9 +233,7 @@ export default class FindRestaurant extends Component{
 		    					fontWeight: 'bold',
 		    					textAlign: 'center',
 		    					textAlignVertical: 'center',
-		    					backgroundColor: '#ba0bc6',
-		    					borderColor: '#fff',
-		    					borderWidth:3,
+		    					backgroundColor: '#fff',
 		    					color: '#000',
 		    					fontSize: 11
 		    			}}>
@@ -212,15 +248,7 @@ export default class FindRestaurant extends Component{
 		    			</Text>
 		    		</TouchableWithoutFeedback>
 
-		    		<View style={{
-		    				height:'73%',
-		    				top: '22%',
-		    				position: 'relative',
-		    				width: '100%',
-		    				opacity: 1.2
-		    		}}>
-		    			{this.getMapDisplay()}
-		    		</View>
+		    		
 
 		    	</View>
 		    </React.Fragment>

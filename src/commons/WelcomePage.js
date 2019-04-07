@@ -11,8 +11,9 @@ import {Platform,
 	TouchableWithoutFeedback} 
 	from 'react-native';
 import {Container, Icon} from 'native-base';
-import * as firebase from 'firebase';
-import SyncStorage   from 'sync-storage';
+import SVGImage          from 'react-native-svg-image';
+import * as firebase     from 'firebase';
+import SyncStorage       from 'sync-storage';
 
 /* -- Custom Components  -- */
 
@@ -24,24 +25,23 @@ export default class WelcomePage extends Component{
 	render() {
 	    return (
 	    	<React.Fragment>
-	    		<Image 
-					source={require('../img/content/content_2.jpg')}
-		    		style={{
-		    			height:'100%',
+	    		<View style= {{
+		    			height: '100%',
 		    			width: '100%',
 		    			position: 'absolute',
-		    			resizeMode:'stretch'
-		    		}}/>
-		    	<View style={{
-		    				height: '44%',
-		    				width: '100%',
-		    				position: 'absolute',
-		    				top: '38%',
-		    				backgroundColor: '#fff',
-		    				opacity: 0.7
-		    		}}>
-
+		    			backgroundColor: '#555dff'
+		    	}}>
 		    	</View>
+		    	<Image 
+					source={require('../img/background.png')}
+		    		style={{
+		    			height: '48%',
+		    			width: '75%',
+		    			position: 'absolute',
+		    			resizeMode:'cover',
+		    			top: '11%',
+		    			left: '12.5%'
+		    		}}/>
 
 		    	<View 	style={{
 		    				height: '100%',
@@ -49,47 +49,39 @@ export default class WelcomePage extends Component{
 		    	}}>
 		    		<View style={{
 		    				height: '40%',
-		    				width: '100%',
+		    				width: '90%',
+		    				left: '5%',
 		    				position: 'relative',
-		    				top: '38%'
+		    				top: '45%',
+		    				alignItems: 'center'
 		    		}}>
-		    			<Text style={{
-		    					position:'relative',
-		    					height: '34%',
-		    					width: '55%',
-		    					textAlign: 'center',
-		    					left: '22.25%',
-		    					top: '5%',
-		    					fontSize:25,
-		    					fontWeight: 'bold',
-		    					borderColor: '#000',
-		    					color: '#ba0bc6',
-		    			}}>
-		    				ASA-TA-KAON?{'\n'}
-		    				<Icon
-		    					style = {{
-		    						fontSize: 35,
-		    						color: '#ba0bc6'
-		    					}}
-		    					name  = 'location-pin'
-		    					type  = 'Entypo'/>
-		    			</Text>
-
 		    			<TouchableWithoutFeedback
 		    				onPress={()=>this.props.doChangeMainAppDisplay(Constants.APP_PAGES.FIND_RESTAURANT_APP)}>
 			    			<Text style={{
+				    				borderWidth: 1.2,
+								    borderRadius: 2,
+								    borderColor: '#ddd',
+								    borderBottomWidth: 0,
+								    shadowColor: '#000',
+								    shadowOffset: {
+										width: 0,
+										height: 5,
+									},
+									shadowOpacity: 0.34,
+									shadowRadius: 6.27,
+									elevation: 10,
+								    backgroundColor: '#fff',
 			    					height: '20%',
-			    					width: '40%',
+			    					width: '50%',
 			    					borderWidth: 2,
 			    					position: 'relative',
-			    					top: '17%',
-			    					left: '30%',
+			    					top: '42%',
 			    					fontSize: 15,
-			    					paddingTop: '3%',
 			    					color: '#000',
 			    					textAlign:'center',
+			    					textAlignVertical : 'center',
 			    					borderRadius: 100,
-			    					color: '#ba0bc6',
+			    					color: '#000',
 			    					fontWeight: '900'
 			    			}}>	
 			    				Find Restaurant
@@ -99,18 +91,29 @@ export default class WelcomePage extends Component{
 			    		<TouchableWithoutFeedback
 			    			onPress={()=>console.log('manual')}>
 			    			<Text style={{
+			    					borderWidth: 1.2,
+								    borderRadius: 2,
+								    borderColor: '#ddd',
+								    borderBottomWidth: 0,
+								    shadowColor: '#000',
+								    shadowOffset: {
+										width: 0,
+										height: 5,
+									},
+									shadowOpacity: 0.34,
+									shadowRadius: 6.27,
+									elevation: 10,
+								    backgroundColor: '#fff',
 			    					height: '20%',
-			    					width: '40%',
-			    					borderWidth: 2,
+			    					width: '50%',
 			    					position: 'relative',
-			    					top: '23%',
-			    					left: '30%',
+			    					top: '50%',
 			    					fontSize: 15,
-			    					paddingTop: '3%',
-			    					color: '#000',
 			    					textAlign:'center',
+			    					textAlignVertical : 'center',
 			    					borderRadius: 100,
-			    					color: '#ba0bc6',
+			    					borderWidth: 2,
+			    					color: '#000',
 			    					fontWeight: '900'
 			    			}}>	
 			    				Our Manual

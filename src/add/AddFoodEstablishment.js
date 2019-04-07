@@ -10,14 +10,15 @@ import {Platform,
 	NetInfo,
 	TouchableWithoutFeedback,
 	TextInput,
-	Picker} 
+	Picker,
+	CheckBox,
+	ScrollView} 
 	from 'react-native';
 import {
 	Container, 
 	Icon,
 	Spinner} 
 	from 'native-base';
-import * as firebase from 'firebase';
 import SyncStorage   from 'sync-storage';
 
 /* -- Custom Components  -- */
@@ -28,36 +29,130 @@ import Constants from '../commons/Constants.js';
 export default class AddFoodEstablishment extends Component{
 
 	state = {
+		inputRestaurantName  : '',
+		inputStartingHour    : '',
+		inputClosingHour     : '',
+		inputEmailAddress    : '',
+		inputPassword        : '',
+		inputUsername        : '',
+		inputConfirmPassword : '',
+		termsFlag            : false
+	}
 
+	checkBoxForTerms = ()=>{
+		this.setState({termsFlag:!this.state.termsFlag});
+	}
+
+	checkUsernameCharacters = ()=>{
+		return this.state.inputUsername.match(/^[A-z0-9]+$/);
+	}
+
+	submitFoodEstablishment = ()=>{
+		
+		if(this.checkUsernameCharacters() == false){
+			this.props.doSendAReportMessage('Input username should contain letters or digits only');
+			setTimeout(()=>{
+				this.props.doSendAReportMessage('');
+			},Constants.REPORT_DISPLAY_TIME);
+		}
+		else if(this.state.inputRestaurantName.length == 0){
+			this.props.doSendAReportMessage('Please input restaurant name');
+			setTimeout(()=>{
+				this.props.doSendAReportMessage('');
+			},Constants.REPORT_DISPLAY_TIME);
+		}
+		else if(this.validateBusinessHours()== false){
+			this.props.doSendAReportMessage('Invalid input for business hours');
+			setTimeout(()=>{
+				this.props.doSendAReportMessage('');
+			},Constants.REPORT_DISPLAY_TIME);
+		}
+		else if(this.state.inputUsername.length<Constants.CREDENTIALS_POLICY.MIN_USERNAME){
+			this.props.doSendAReportMessage('Username input should be minimum of '+
+				Constants.CREDENTIALS_POLICY.MIN_USERNAME+' characters');
+			setTimeout(()=>{
+				this.props.doSendAReportMessage('');
+			},Constants.REPORT_DISPLAY_TIME);
+		}
+		else if(this.state.inputPassword.length<Constants.CREDENTIALS_POLICY.MIN_PASSWORD){
+			this.props.doSendAReportMessage('Password input should be minimum of '+
+				Constants.CREDENTIALS_POLICY.MIN_PASSWORD+' characters');
+			setTimeout(()=>{
+				this.props.doSendAReportMessage('');
+			},Constants.REPORT_DISPLAY_TIME);
+		}
+		else if(this.state.inputPassword!=this.state.inputConfirmPassword){
+			this.props.doSendAReportMessage('Input passwords does not match');
+			setTimeout(()=>{
+				this.props.doSendAReportMessage('');
+			},Constants.REPORT_DISPLAY_TIME);
+		}
+		else if(this.state.inputEmailAddress.length==0){
+			this.props.doSendAReportMessage('Please fill in your e-mail address');
+			setTimeout(()=>{
+				this.props.doSendAReportMessage('');
+			},Constants.REPORT_DISPLAY_TIME);
+		}
+		else if(this.state.termsFlag == false){
+			this.props.doSendAReportMessage('Please agree to terms of our service');
+			setTimeout(()=>{
+				this.props.doSendAReportMessage('');
+			},Constants.REPORT_DISPLAY_TIME);
+		}
+		else{
+			const restaurantData = {
+				restaurantName : this.state.inputRestaurantName,
+				startingHour   : this.state.inputStartingHour,
+				closingHour    : this.state.inputClosingHour,
+				email          : this.state.inputEmailAddress,
+				username       : this.state.inputUsername,
+				password       : this.state.inputPassword
+			}
+			this.props.doRegisterRestaurant(restaurantData);
+		}	
+	}
+
+	validateBusinessHours=()=>{
+
+		if(this.state.inputStartingHour.length<7 || 
+			this.state.inputClosingHour.length<7){
+			return false;
+		}
+
+		const startingHour    = this.state.inputStartingHour[0] +
+			this.state.inputStartingHour[1];
+		const startingMinutes = this.state.inputStartingHour[3] + 
+			this.state.inputStartingHour[4];
+
+		const closingHour     = this.state.inputClosingHour[0] + 
+			this.state.inputClosingHour[1];
+		const closingMinutes  = this.state.inputClosingHour[3] + 
+			this.state.inputClosingHour[4];
+
+
+		
+		if(Number.isInteger(Number(startingHour)) == false ||
+			Number.isInteger(Number(startingMinutes)) == false || 
+			Number.isInteger(Number(closingHour)) == false || 
+			Number.isInteger(Number(closingMinutes)) == false ){
+			return false;
+		}
+		else if(Number(startingHour)>12 || Number(startingHour)<1)return false;
+		else if(Number(closingHour)>12 || Number(closingHour)<1)return false;
+		else if(Number(startingMinutes)>60 || Number(startingMinutes)<0)return false;
+		else if(Number(closingMinutes)>60 || Number(closingMinutes)<0)return false;
+		else return true;
 	}
 
 	render() {
 	    return (
 	    	<React.Fragment>
-	    		<Image 
-					source={require('../img/content/content_2.jpg')}
-		    		style={{
-		    			height:'100%',
-		    			width: '100%',
-		    			position: 'absolute',
-		    			resizeMode:'stretch'
-		    		}}/>
-		    	<View style={{
-		    				height: '91%',
-		    				top:'9%',
-		    				width: '100%',
-		    				position: 'absolute',
-		    				backgroundColor: '#fff',
-		    				opacity: 0.4
-		    		}}>
-
-		    	</View>
 
 		    	<View style={{
 		    				height: '9%',
 		    				width: '100%',
 		    				position: 'absolute',
-		    				backgroundColor: '#ba0bc6'
+		    				backgroundColor: '#555dff'
 		    		}}>
 		    			<TouchableWithoutFeedback
 		    				onPress={()=>this.props.doChangeMainAppDisplay(Constants.APP_PAGES.FIND_RESTAURANT_APP)}>
@@ -80,71 +175,372 @@ export default class AddFoodEstablishment extends Component{
 			    		</TouchableWithoutFeedback>
 		    	</View>
 
-
 		    	<View 	style={{
 		    				height: '100%',
 		    				width: '100%',
-		    				position:'relative'
+		    				position:'relative',
+		    				alignItems:'center'
 		    	}}>
-		    			<Text style={{
-		    					height: '9%',
-		    					width: '70%',
-		    					position: 'relative',
-		    					left: '15%',
-		    					top: '12%',
-		    					borderWidth: 1.8,
-		    					fontWeight: 'bold',
-		    					fontSize: 20,
-		    					borderColor: '#000',
-		    					color: '#000',
-		    					textAlign: 'center',
-		    					textAlignVertical: 'center',
-		    					borderRadius: 100
-		    			}}>
-		    				REGISTER YOUR RESTAURANT
-		    			</Text>
-		    			<View style={{
-				    			height: '73%',
-				    			width:'100%',
-				    			position: 'absolute',
-				    			opacity: 0.9,
-				    			top: '24%',
-				    			backgroundColor: '#fff'	
-				    	}}>
-				    		<Text style={{
-				    				position: 'relative',
-				    				top: '5%',
-				    				width:'40%',
-				    				left: '30%',
-				    				textAlignVertical: 'center',
-				    				textAlign: 'center',
-				    				fontSize:15,
-				    				color: '#000',
-				    				fontWeight: 'bold'
-				    		}}>
-				    			Restaurant Name
-				    		</Text>
+		    		<Text style={{
+		    				borderWidth: 1.2,
+						    borderColor: '#ddd',
+						    borderBottomWidth: 0,
+						    shadowColor: '#000',
+						    shadowOffset: {
+								width: 0,
+								height: 5,
+							},
+							shadowOpacity: 0.34,
+							shadowRadius: 6.27,
+							elevation: 10,
+						    backgroundColor: '#fff',
+		    				height: '9%',
+		    				width: '70%',
+		    				position: 'relative',
+		    				textAlignVertical:'center',
+		    				textAlign: 'center',
+		    				borderRadius:20,
+		    				fontSize: 16,
+		    				fontWeight: 'bold',
+		    				top: '12%'
+		    		}}>	
+		    			Restaurant Owner Registration
+		    		</Text>
 
-				    		<View style={{
-		    						height: '11%',
-		    						width: '50%',
-		    						top: '5%',
+		    		<View style={{
+		    				borderWidth: 1.2,
+						    borderColor: '#ddd',
+						    borderBottomWidth: 0,
+						    shadowColor: '#000',
+						    shadowOffset: {
+								width: 0,
+								height: 5,
+							},
+							shadowOpacity: 0.34,
+							shadowRadius: 6.27,
+							elevation: 10,
+						    backgroundColor: '#fff',
+		    				height: '70%',
+		    				width:'90%',
+		    				borderWidth: 2,
+		    				borderRadius: 20,
+		    				top: '16%',
+		    				paddingTop: '5%'
+		    		}}>
+		    			<ScrollView
+		    				style={{width:'100%'}}
+		    				contentContainerStyle={{alignItems:'center'}}>
+
+		    				<Text style={{
+		    						height:23,
+		    						width: 170,
 		    						position: 'relative',
-		    						left: '25%',
-		    						borderWidth: 2,
-		    						borderRadius: 100
+		    						textAlign: 'center',
+		    						fontSize: 16,
+		    						fontWeight: 'bold'
+		    				}}>
+		    					Restaurant Name
+		    				</Text>
+
+		    				<View style={{
+		    						height:40,
+		    						width:170,
+		    						position: 'relative',
+		    						borderRadius: 100,
+		    						borderWidth:2,
+		    						borderColor: '#000'
 		    				}}>
 		    					<TextInput
-		    						placeholder   = 'restaurant name'
+		    						placeholder = 'input your restaurant'
 		    						style={{
 		    							height: '100%',
-		    							width: '86%',
-		    							fontSize: 14,
-		    							position:'relative',
-		    							left: '7%'
-		    						}}/>
-			    			</View>
-				    	</View>	
+		    							width: '100%',
+		    							position: 'relative',
+		    							fontSize: 15,
+		    							textAlign:'center'
+		    						}}
+		    						onChangeText={(inputRestaurantName)=>this.setState({inputRestaurantName})}/>
+		    				</View>
+
+		    				<Text style={{
+		    						height:23,
+		    						width: 120,
+		    						position: 'relative',
+		    						textAlign: 'center',
+		    						fontSize: 16,
+		    						fontWeight: 'bold'
+		    				}}>
+		    					Opening Hour
+		    				</Text>
+
+		    				<View style={{
+		    						height:40,
+		    						width:170,
+		    						position: 'relative',
+		    						borderRadius: 100,
+		    						borderWidth:2,
+		    						borderColor: '#000'
+		    				}}>
+		    					<TextInput
+		    						placeholder = 'HH:MM(AM/PM)'
+		    						style={{
+		    							height: '100%',
+		    							width: '100%',
+		    							position: 'relative',
+		    							fontSize: 15,
+		    							textAlign:'center'
+		    						}}
+		    						onChangeText={(inputStartingHour)=>this.setState({inputStartingHour})}/>
+		    				</View>
+
+		    				<Text style={{
+		    						height:23,
+		    						width: 120,
+		    						position: 'relative',
+		    						textAlign: 'center',
+		    						fontSize: 16,
+		    						fontWeight: 'bold'
+		    				}}>
+		    					Closing Hour
+		    				</Text>
+
+		    				<View style={{
+		    						height:40,
+		    						width:170,
+		    						position: 'relative',
+		    						borderRadius: 100,
+		    						borderWidth:2,
+		    						borderColor: '#000'
+		    				}}>
+		    					<TextInput
+		    						placeholder = 'HH:MM(AM/PM)'
+		    						style={{
+		    							height: '100%',
+		    							width: '100%',
+		    							position: 'relative',
+		    							fontSize: 15,
+		    							textAlign:'center'
+		    						}}
+		    						onChangeText={(inputClosingHour)=>this.setState({inputClosingHour})}/>
+		    				</View>
+
+
+		    				<Text style={{
+		    						height:23,
+		    						width: 120,
+		    						position: 'relative',
+		    						textAlign: 'center',
+		    						fontSize: 16,
+		    						fontWeight: 'bold'
+		    				}}>
+		    					E-mail Address
+		    				</Text>
+
+		    				<View style={{
+		    						height:40,
+		    						width:170,
+		    						position: 'relative',
+		    						borderRadius: 100,
+		    						borderWidth:2,
+		    						borderColor: '#000'
+		    				}}>
+		    					<TextInput
+		    						placeholder = 'input e-mail address'
+		    						style={{
+		    							height: '100%',
+		    							width: '100%',
+		    							position: 'relative',
+		    							fontSize: 15,
+		    							textAlign:'center'
+		    						}}
+		    						onChangeText={(inputEmailAddress)=>this.setState({inputEmailAddress})}/>
+		    				</View>
+		    				<Text style={{
+		    						height:23,
+		    						width: 300,
+		    						position: 'relative',
+		    						textAlign: 'center',
+		    						fontSize: 14,
+		    						fontWeight: 'bold'
+		    				}}>
+		    					Username {'(minimum of '+
+		    					Constants.CREDENTIALS_POLICY.MIN_USERNAME + ' characters)'}
+		    				</Text>
+
+		    				<View style={{
+		    						height:40,
+		    						width:170,
+		    						position: 'relative',
+		    						borderRadius: 100,
+		    						borderWidth:2,
+		    						borderColor: '#000'
+		    				}}>
+		    					<TextInput
+		    						placeholder = 'create username'
+		    						style={{
+		    							height: '100%',
+		    							width: '100%',
+		    							position: 'relative',
+		    							fontSize: 15,
+		    							textAlign:'center'
+		    						}}
+		    						onChangeText={(inputUsername)=>this.setState({inputUsername})}/>
+		    				</View>
+
+
+		    				<Text style={{
+		    						height:23,
+		    						width: 120,
+		    						position: 'relative',
+		    						textAlign: 'center',
+		    						fontSize: 16,
+		    						fontWeight: 'bold'
+		    				}}>
+		    					Password
+		    				</Text>
+
+		    				<View style={{
+		    						height:40,
+		    						width:170,
+		    						position: 'relative',
+		    						borderRadius: 100,
+		    						borderWidth:2,
+		    						borderColor: '#000'
+		    				}}>
+		    					<TextInput
+		    						placeholder = '******'
+		    						secureTextEntry={true}
+		    						style={{
+		    							height: '100%',
+		    							width: '100%',
+		    							position: 'relative',
+		    							fontSize: 15,
+		    							textAlign:'center'
+		    						}}
+		    						onChangeText={(inputPassword)=>this.setState({inputPassword})}/>
+		    				</View>
+
+		    				<Text style={{
+		    						height:23,
+		    						width: 170,
+		    						position: 'relative',
+		    						textAlign: 'center',
+		    						fontSize: 16,
+		    						fontWeight: 'bold'
+		    				}}>
+		    					Confirm Password
+		    				</Text>
+
+		    				<View style={{
+		    						height:40,
+		    						width:170,
+		    						position: 'relative',
+		    						borderRadius: 100,
+		    						borderWidth:2,
+		    						borderColor: '#000'
+		    				}}>
+		    					<TextInput
+		    						secureTextEntry={true}
+		    						placeholder = '******'
+		    						style={{
+		    							height: '100%',
+		    							width: '100%',
+		    							position: 'relative',
+		    							fontSize: 15,
+		    							textAlign:'center'
+		    						}}
+		    						onChangeText={(inputConfirmPassword)=>this.setState({inputConfirmPassword})}/>
+		    				</View>
+		    				<View style={{
+		    						height:35,
+		    						width: 230,
+		    						position: 'relative',
+		    						flexDirection: 'row',
+		    						justifyContent: 'center'
+		    				}}>
+		    					<CheckBox
+				    				value={this.state.termsFlag}
+				    				onChange={this.checkBoxForTerms}
+				    				style={{
+				    					width:'10%',
+				    					height:'90%',
+				    					position: 'relative'
+				    				}}/>
+				    			<Text style={{
+				    					height:'100%',
+				    					width: '80%',
+				    					textAlign: 'center',
+				    					textAlignVertical:'center',
+				    					position: 'relative',
+				    					fontSize: 13,
+				    					fontWeight: 'bold',
+				    					left: '5%'
+				    			}}>
+				    				Agree to our terms of service
+				    			</Text>
+		    				</View>
+
+
+		    				<TouchableWithoutFeedback
+		    					onPress={()=>this.submitFoodEstablishment()}>
+			    				<Text style={{
+			    						borderWidth: 1.2,
+									    borderColor: '#ddd',
+									    borderBottomWidth: 0,
+									    shadowColor: '#000',
+									    shadowOffset: {
+											width: 0,
+											height: 5,
+										},
+										shadowOpacity: 0.34,
+										shadowRadius: 6.27,
+										elevation: 10,
+									    backgroundColor: '#fff',
+			    						height: 55,
+			    						width: 140,
+			    						position: 'relative',
+			    						borderWidth: 2,
+			    						borderRadius: 20,
+			    						fontWeight: 'bold',
+			    						fontSize: 16,
+			    						textAlign: 'center',
+			    						top:10,
+			    						textAlignVertical: 'center'
+			    				}}>
+			    						Submit
+			    				</Text>
+			    			</TouchableWithoutFeedback>
+
+		    				<Text style={{
+		    						height: 45,
+		    						width: 130,
+		    						position: 'relative',
+		    						fontWeight: 'bold',
+		    						fontSize: 16,
+		    						textAlign: 'center',
+		    						textAlignVertical: 'center'
+		    				}}>
+		    				</Text>
+
+		    			</ScrollView>
+
+			    		<Text 
+			    			style={{
+			    				height:'9%',
+			    				width:'11%',
+			    				position:'absolute',
+			    				textAlign: 'center',
+			    				textAlignVertical:'center',
+			    				top: '96%',
+			    				left: '3%'
+			    		}}>
+			    			<Icon
+			    				style={{fontSize:30}}
+			    				name = 'ios-arrow-down'
+			    				type = 'Ionicons'/>
+
+			    		</Text>
+		    		</View>
 
 		    	</View>
 		    </React.Fragment>

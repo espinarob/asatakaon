@@ -3,6 +3,7 @@ import {Platform, StyleSheet, Text, View, AsyncStorage, NetInfo} from 'react-nat
 import { Container} from 'native-base';
 import Main from './src/Main.js';
 
+
 export default class App extends Component<Props> {
   render() {
     return (

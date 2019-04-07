@@ -10,14 +10,15 @@ import {Platform,
 	NetInfo,
 	TouchableWithoutFeedback,
 	TextInput,
-	Picker} 
+	Picker,
+	CheckBox,
+	ScrollView} 
 	from 'react-native';
 import {
 	Container, 
 	Icon,
 	Spinner} 
 	from 'native-base';
-import * as firebase from 'firebase';
 import SyncStorage   from 'sync-storage';
 
 /* -- Custom Components  -- */
@@ -35,14 +36,35 @@ export default class RegistrationPage extends Component{
 		inputUsername    : '',
 		inputPassword    : '',
 		inputConfirmPass : '',
-		inputGender      : 'Male'
+		inputGender      : 'Male',
+		termsFlag        : false,
+		submitted        : false
 	}
+
 	onGenderChange = (ItemValue,ItemIndex)=>{
 		this.setState({inputGender:ItemValue});
 	}
 
+	checkBoxForTerms = ()=>{
+		this.setState({termsFlag:!this.state.termsFlag});
+	}
+
+	checkUsernameCharacters = ()=>{
+		return this.state.inputUsername.match(/^[A-z0-9]+$/);
+	}
+
 	submitCredentials = ()=>{
-		if(this.state.inputPassword!=this.state.inputConfirmPass){
+		
+		if(this.state.submitted == true){
+			return;
+		}
+		else if(this.checkUsernameCharacters() == false){
+			this.props.doSendAReportMessage('Input username should contain letters or digits only');
+			setTimeout(()=>{
+				this.props.doSendAReportMessage('');
+			},Constants.REPORT_DISPLAY_TIME);
+		}
+		else if(this.state.inputPassword!=this.state.inputConfirmPass){
 			this.props.doSendAReportMessage('Input passwords does not match');
 			setTimeout(()=>{
 				this.props.doSendAReportMessage('');
@@ -86,6 +108,12 @@ export default class RegistrationPage extends Component{
 				this.props.doSendAReportMessage('');
 			},Constants.REPORT_DISPLAY_TIME);
 		}
+		else if(this.state.termsFlag == false){
+			this.props.doSendAReportMessage('Please agree to terms of our service');
+			setTimeout(()=>{
+				this.props.doSendAReportMessage('');
+			},Constants.REPORT_DISPLAY_TIME);
+		}
 		else{
 			const userData = {
 				firstName : this.state.inputFirstName,
@@ -96,7 +124,10 @@ export default class RegistrationPage extends Component{
 				password  : this.state.inputPassword,
 				gender    : this.state.inputGender
 			};
-
+			this.setState({submitted:true});
+			setTimeout(()=>{
+				this.setState({submitted:false});
+			},Constants.REPORT_DISPLAY_TIME);
 			this.props.doRegisterUser(userData);
 		}
 	}
@@ -104,30 +135,12 @@ export default class RegistrationPage extends Component{
 	render() {
 	    return (
 	    	<React.Fragment>
-	    		<Image 
-					source={require('../img/content/content_2.jpg')}
-		    		style={{
-		    			height:'100%',
-		    			width: '100%',
-		    			position: 'absolute',
-		    			resizeMode:'stretch'
-		    		}}/>
-		    	<View style={{
-		    				height: '91%',
-		    				top:'9%',
-		    				width: '100%',
-		    				position: 'absolute',
-		    				backgroundColor: '#fff',
-		    				opacity: 0.4
-		    		}}>
-
-		    	</View>
 
 		    	<View style={{
 		    				height: '9%',
 		    				width: '100%',
-		    				position: 'absolute',
-		    				backgroundColor: '#ba0bc6'
+		    				position: 'absolute',		
+		    				backgroundColor: '#555dff'
 		    		}}>
 		    			<TouchableWithoutFeedback
 		    				onPress={()=>this.props.doChangeMainAppDisplay(Constants.APP_PAGES.FIND_RESTAURANT_APP)}>
@@ -154,398 +167,406 @@ export default class RegistrationPage extends Component{
 		    	<View 	style={{
 		    				height: '100%',
 		    				width: '100%',
-		    				position:'relative'
+		    				position:'relative',
+		    				alignItems:'center'
 		    	}}>
-		    			<Text style={{
-		    					height: '9%',
-		    					width: '70%',
-		    					position: 'relative',
-		    					left: '15%',
-		    					top: '13%',
-		    					borderWidth: 1.8,
-		    					fontWeight: 'bold',
-		    					fontSize: 20,
-		    					borderColor: '#000',
-		    					color: '#000',
-		    					textAlign: 'center',
-		    					textAlignVertical: 'center',
-		    					borderRadius: 100
-		    			}}>
-		    				SIGN-UP USER PAGE
-		    			</Text>
-
-		    			<View style={{
-				    			height: '73%',
-				    			width:'100%',
-				    			position: 'absolute',
-				    			opacity: 0.9,
-				    			top: '24%',
-				    			backgroundColor: '#fff'	
-				    	}}>
-				    	</View>	
-
-
-				    	<View style={{
-		    				height: '4%',
-		    				width: '100%',
+		    		<Text style={{
+		    				borderWidth: 1.2,
+						    borderColor: '#ddd',
+						    borderBottomWidth: 0,
+						    shadowColor: '#000',
+						    shadowOffset: {
+								width: 0,
+								height: 5,
+							},
+							shadowOpacity: 0.34,
+							shadowRadius: 6.27,
+							elevation: 10,
+						    backgroundColor: '#fff',
+		    				height: '9%',
+		    				width: '70%',
 		    				position: 'relative',
-		    				top: '27%',
-		    				flexDirection: 'row'
-		    			}}>
+		    				textAlignVertical:'center',
+		    				textAlign: 'center',
+		    				borderRadius:20,
+		    				fontSize: 20,
+		    				fontWeight: 'bold',
+		    				top: '12%'
+		    		}}>	
+		    			User Registration
+		    		</Text>
+
+		    		<View style={{
+		    				borderWidth: 1.2,
+						    borderColor: '#ddd',
+						    borderBottomWidth: 0,
+						    shadowColor: '#000',
+						    shadowOffset: {
+								width: 0,
+								height: 5,
+							},
+							shadowOpacity: 0.34,
+							shadowRadius: 6.27,
+							elevation: 10,
+						    backgroundColor: '#fff',
+		    				height: '70%',
+		    				width:'90%',
+		    				borderWidth: 2,
+		    				borderRadius: 20,
+		    				top: '16%',
+		    				paddingTop: '5%'
+		    		}}>
+		    			<ScrollView
+		    				style={{width:'100%'}}
+		    				contentContainerStyle={{alignItems:'center'}}>
 		    				<Text style={{
-		    					color: '#000',
-		    					height:'100%',
-		    					width: '23%',
-		    					left: '100%',
-		    					fontSize: 14,
-		    					fontWeight:'bold',
-		    					textAlign:'center',
-		    					textAlignVertical: 'center'
+		    						height:23,
+		    						width: 120,
+		    						position: 'relative',
+		    						textAlign: 'center',
+		    						fontSize: 16,
+		    						fontWeight: 'bold'
 		    				}}>
 		    					First Name
 		    				</Text>
 
+		    				<View style={{
+		    						height:40,
+		    						width:170,
+		    						position: 'relative',
+		    						borderRadius: 100,
+		    						borderWidth:2,
+		    						borderColor: '#000'
+		    				}}>
+		    					<TextInput
+		    						placeholder = 'input first name'
+		    						style={{
+		    							height: '100%',
+		    							width: '100%',
+		    							position: 'relative',
+		    							fontSize: 15,
+		    							textAlign:'center'
+		    						}}
+		    						onChangeText={(inputFirstName)=>this.setState({inputFirstName})}/>
+		    				</View>
+
 		    				<Text style={{
-		    					color: '#000',
-		    					height:'100%',
-		    					width: '30%',
-		    					left: '520%',
-		    					position: 'relative',
-		    					fontSize: 14,
-		    					fontWeight:'bold'
+		    						height:23,
+		    						width: 120,
+		    						position: 'relative',
+		    						textAlign: 'center',
+		    						fontSize: 16,
+		    						fontWeight: 'bold'
 		    				}}>
 		    					Last Name
 		    				</Text>
-		    			</View>
-
-
-		    			<View style={{
-		    				height: '8%',
-		    				width: '100%',
-		    				position: 'relative',
-		    				top: '27.3%',
-		    				flexDirection: 'row'
-		    			}}>
-		    				<View style={{
-		    						height: '100%',
-		    						width: '45%',
-		    						position: 'relative',
-		    						left: '30%',
-		    						borderWidth: 2,
-		    						borderRadius: 100
-		    				}}>
-		    					<TextInput
-		    						value        = {this.state.inputFirstName}
-		    						onChangeText = {(inputFirstName)=>this.setState({inputFirstName:inputFirstName})}
-		    						placeholder  = 'place given name'
-		    						style={{
-		    							height: '100%',
-		    							width: '86%',
-		    							fontSize: 14,
-		    							position:'relative',
-		    							left: '7%'
-		    						}}/>
-		    				</View>
 
 		    				<View style={{
-		    						height: '100%',
-		    						width: '45%',
+		    						height:40,
+		    						width:170,
 		    						position: 'relative',
-		    						left: '50%',
-		    						borderWidth: 2,
-		    						borderRadius: 100
+		    						borderRadius: 100,
+		    						borderWidth:2,
+		    						borderColor: '#000'
 		    				}}>
 		    					<TextInput
-		    						value        = {this.state.inputLastName}
-		    						onChangeText = {(inputLastName)=>this.setState({inputLastName:inputLastName})}
-		    						placeholder  = 'place last name'
+		    						placeholder = 'input last name'
 		    						style={{
 		    							height: '100%',
-		    							width: '86%',
-		    							fontSize: 14,
-		    							position:'relative',
-		    							left: '7%'
-		    						}}/>
+		    							width: '100%',
+		    							position: 'relative',
+		    							fontSize: 15,
+		    							textAlign:'center'
+		    						}}
+		    						onChangeText={(inputLastName)=>this.setState({inputLastName})}/>
 		    				</View>
-		    			</View>
 
-
-		    			<View style={{
-		    				height: '4%',
-		    				width: '100%',
-		    				position: 'relative',
-		    				top: '30%',
-		    				flexDirection: 'row'
-		    			}}>
 		    				<Text style={{
-		    					color: '#000',
-		    					height:'100%',
-		    					width: '23%',
-		    					left: '100%',
-		    					fontSize: 14,
-		    					fontWeight:'bold',
-		    					textAlign:'center',
-		    					textAlignVertical: 'center'
+		    						height:23,
+		    						width: 120,
+		    						position: 'relative',
+		    						textAlign: 'center',
+		    						fontSize: 16,
+		    						fontWeight: 'bold'
 		    				}}>
 		    					Address
 		    				</Text>
 
-		    				<Text style={{
-		    					color: '#000',
-		    					height:'100%',
-		    					width: '30%',
-		    					left: '520%',
-		    					position: 'relative',
-		    					fontSize: 14,
-		    					fontWeight:'bold'
-		    				}}>
-		    					E-mail
-		    				</Text>
-		    			</View>
-
-		    			<View style={{
-		    				height: '8%',
-		    				width: '100%',
-		    				position: 'relative',
-		    				top: '30%',
-		    				flexDirection: 'row'
-		    			}}>
 		    				<View style={{
-		    						height: '100%',
-		    						width: '45%',
+		    						height:40,
+		    						width:170,
 		    						position: 'relative',
-		    						left: '30%',
-		    						borderWidth: 2,
-		    						borderRadius: 100
+		    						borderRadius: 100,
+		    						borderWidth:2,
+		    						borderColor: '#000'
 		    				}}>
 		    					<TextInput
-		    						value        = {this.state.inputAddress}
-		    						onChangeText = {(inputAddress)=>this.setState({inputAddress:inputAddress})}
-		    						placeholder  = 'place given address'
+		    						placeholder = 'input your address'
 		    						style={{
 		    							height: '100%',
-		    							width: '86%',
-		    							fontSize: 14,
-		    							position:'relative',
-		    							left: '7%'
-		    						}}/>
+		    							width: '100%',
+		    							position: 'relative',
+		    							fontSize: 15,
+		    							textAlign:'center'
+		    						}}
+		    						onChangeText={(inputAddress)=>this.setState({inputAddress})}/>
 		    				</View>
 
-		    				<View style={{
-		    						height: '100%',
-		    						width: '45%',
-		    						position: 'relative',
-		    						left: '50%',
-		    						borderWidth: 2,
-		    						borderRadius: 100
-		    				}}>
-		    					<TextInput
-		    						value        = {this.state.inputEmail}
-		    						onChangeText = {(inputEmail)=>this.setState({inputEmail:inputEmail})}
-		    						placeholder = 'registered e-mail'
-		    						style={{
-		    							height: '100%',
-		    							width: '86%',
-		    							fontSize: 14,
-		    							position:'relative',
-		    							left: '7%'
-		    						}}/>
-		    				</View>
-		    			</View>
-
-		    			<View style={{
-		    				height: '4%',
-		    				width: '100%',
-		    				position: 'relative',
-		    				top: '33%',
-		    				flexDirection: 'row'
-		    			}}>
 		    				<Text style={{
-		    					color: '#000',
-		    					height:'100%',
-		    					width: '23%',
-		    					left: '100%',
-		    					fontSize: 14,
-		    					fontWeight:'bold',
-		    					textAlign:'center',
-		    					textAlignVertical: 'center'
+		    						height:23,
+		    						width: 120,
+		    						position: 'relative',
+		    						textAlign: 'center',
+		    						fontSize: 16,
+		    						fontWeight: 'bold'
 		    				}}>
-		    					Username
+		    					E-mail Address
 		    				</Text>
 
-		    				<Text style={{
-		    					color: '#000',
-		    					height:'100%',
-		    					width: '30%',
-		    					left: '520%',
-		    					position: 'relative',
-		    					fontSize: 14,
-		    					fontWeight:'bold'
-		    				}}>
-		    					Password
-		    				</Text>
-		    			</View>
-
-		    			<View style={{
-		    				height: '8%',
-		    				width: '100%',
-		    				position: 'relative',
-		    				top: '33%',
-		    				flexDirection: 'row'
-		    			}}>
 		    				<View style={{
-		    						height: '100%',
-		    						width: '45%',
+		    						height:40,
+		    						width:170,
 		    						position: 'relative',
-		    						left: '30%',
-		    						borderWidth: 2,
-		    						borderRadius: 100
+		    						borderRadius: 100,
+		    						borderWidth:2,
+		    						borderColor: '#000'
 		    				}}>
 		    					<TextInput
-		    						maxLength     = {Constants.CREDENTIALS_POLICY.MAX_USERNAME}
-		    						value         = {this.state.inputUsername}
-		    						onChangeText  = {(inputUsername)=>this.setState({inputUsername:inputUsername})}
-		    						placeholder   = 'create username'
+		    						placeholder = 'input e-mail address'
 		    						style={{
 		    							height: '100%',
-		    							width: '86%',
-		    							fontSize: 14,
-		    							position:'relative',
-		    							left: '7%'
-		    						}}/>
+		    							width: '100%',
+		    							position: 'relative',
+		    							fontSize: 15,
+		    							textAlign:'center'
+		    						}}
+		    						onChangeText={(inputEmail)=>this.setState({inputEmail})}/>
 		    				</View>
 
-		    				<View style={{
-		    						height: '100%',
-		    						width: '45%',
-		    						position: 'relative',
-		    						left: '50%',
-		    						borderWidth: 2,
-		    						borderRadius: 100
-		    				}}>
-		    					<TextInput
-		    						maxLength    = {Constants.CREDENTIALS_POLICY.MAX_PASSWORD}
-		    						value        = {this.state.inputPassword}
-		    						onChangeText = {(inputPassword)=>this.setState({inputPassword:inputPassword})}
-		    						placeholder  = '*******'
-		    						secureTextEntry={true}
-		    						style={{
-		    							height: '100%',
-		    							width: '86%',
-		    							fontSize: 14,
-		    							position:'relative',
-		    							left: '7%'
-		    						}}/>
-		    				</View>
-		    			</View>
-
-
-		    			<View style={{
-		    				height: '4%',
-		    				width: '100%',
-		    				position: 'relative',
-		    				top: '35%',
-		    				flexDirection: 'row'
-		    			}}>
 		    				<Text style={{
-		    					color: '#000',
-		    					height:'100%',
-		    					width: '23%',
-		    					left: '100%',
-		    					fontSize: 14,
-		    					fontWeight:'bold',
-		    					textAlign:'center',
-		    					textAlignVertical: 'center'
+		    						height:23,
+		    						width: 120,
+		    						position: 'relative',
+		    						textAlign: 'center',
+		    						fontSize: 16,
+		    						fontWeight: 'bold'
 		    				}}>
 		    					Gender
 		    				</Text>
 
+		    				<View style={{
+		    						height:40,
+		    						width:170,
+		    						position: 'relative',
+		    						borderRadius: 100,
+		    						borderWidth:2,
+		    						borderColor: '#000'
+		    				}}>
+		    					<Picker
+						        	style={{height:'100%',width:'100%',position:'relative'}}
+						        	onValueChange = {this.onGenderChange}
+						        	selectedValue = {this.state.inputGender}>
+					        		<Picker.Item 
+					        			label={'Male'} 
+		        						value={'Male'}/>
+		        					<Picker.Item 
+					        			label={'Female'} 
+		        						value={'Female'}/>
+		        					<Picker.Item 
+					        			label={'Rather not say'} 
+		        						value={'Rather not say'}/>
+						 		</Picker>
+
+		    				</View>
+
 		    				<Text style={{
-		    					color: '#000',
-		    					height:'100%',
-		    					width: '40%',
-		    					left: '520%',
-		    					position: 'relative',
-		    					fontSize: 14,
-		    					fontWeight:'bold'
+		    						height:23,
+		    						width: 300,
+		    						position: 'relative',
+		    						textAlign: 'center',
+		    						fontSize: 14,
+		    						fontWeight: 'bold'
+		    				}}>
+		    					Username {'(minimum of '+
+		    					Constants.CREDENTIALS_POLICY.MIN_USERNAME + ' characters)'}
+		    				</Text>
+
+		    				<View style={{
+		    						height:40,
+		    						width:170,
+		    						position: 'relative',
+		    						borderRadius: 100,
+		    						borderWidth:2,
+		    						borderColor: '#000'
+		    				}}>
+		    					<TextInput
+		    						placeholder = 'create username'
+		    						style={{
+		    							height: '100%',
+		    							width: '100%',
+		    							position: 'relative',
+		    							fontSize: 15,
+		    							textAlign:'center'
+		    						}}
+		    						onChangeText={(inputUsername)=>this.setState({inputUsername})}/>
+		    				</View>
+
+		    				<Text style={{
+		    						height:23,
+		    						width: 120,
+		    						position: 'relative',
+		    						textAlign: 'center',
+		    						fontSize: 16,
+		    						fontWeight: 'bold'
+		    				}}>
+		    					Password
+		    				</Text>
+
+		    				<View style={{
+		    						height:40,
+		    						width:170,
+		    						position: 'relative',
+		    						borderRadius: 100,
+		    						borderWidth:2,
+		    						borderColor: '#000'
+		    				}}>
+		    					<TextInput
+		    						secureTextEntry={true}
+		    						placeholder = '********'
+		    						style={{
+		    							height: '100%',
+		    							width: '100%',
+		    							position: 'relative',
+		    							fontSize: 15,
+		    							textAlign:'center'
+		    						}}
+		    						onChangeText={(inputPassword)=>this.setState({inputPassword})}/>
+		    				</View>
+
+
+		    				<Text style={{
+		    						height:23,
+		    						width: 170,
+		    						position: 'relative',
+		    						textAlign: 'center',
+		    						fontSize: 16,
+		    						fontWeight: 'bold'
 		    				}}>
 		    					Confirm Password
 		    				</Text>
-		    			</View>
-
-
-		    			<View style={{
-		    				height: '8%',
-		    				width: '100%',
-		    				position: 'relative',
-		    				top: '35.5%',
-		    				flexDirection: 'row'
-		    			}}>
-		    				<View style={{
-		    						height: '100%',
-		    						width: '45%',
-		    						position: 'relative',
-		    						left: '30%',
-		    						borderWidth: 2,
-		    						borderRadius: 100
-		    				}}>
-
-		    					<Picker
-		    						value         = {this.state.inputGender}
-		    						onValueChange = {this.onGenderChange} 
-						        	style         = {{height:'100%',width:'85%',left:'7.5%'}}>
-						        	<Picker.Item 
-						        		label='Male'
-			        					value='Male'/>
-		        					<Picker.Item 
-						        		label='Female'
-			        					value='Female'/>
-						 		</Picker>
-		    				</View>
 
 		    				<View style={{
-		    						height: '100%',
-		    						width: '45%',
+		    						height:40,
+		    						width:170,
 		    						position: 'relative',
-		    						left: '50%',
-		    						borderWidth: 2,
-		    						borderRadius: 100
+		    						borderRadius: 100,
+		    						borderWidth:2,
+		    						borderColor: '#000'
 		    				}}>
 		    					<TextInput
-		    						maxLength    = {Constants.CREDENTIALS_POLICY.MAX_PASSWORD}
-		    						value        = {this.state.inputConfirmPass}
-		    						onChangeText = {(inputConfirmPass)=>this.setState({inputConfirmPass:inputConfirmPass})}
-		    						placeholder  = '*******'
 		    						secureTextEntry={true}
+		    						placeholder = '********'
 		    						style={{
 		    							height: '100%',
-		    							width: '86%',
-		    							fontSize: 14,
-		    							position:'relative',
-		    							left: '7%'
-		    						}}/>
+		    							width: '100%',
+		    							position: 'relative',
+		    							fontSize: 15,
+		    							textAlign:'center'
+		    						}}
+		    						onChangeText={(inputConfirmPass)=>this.setState({inputConfirmPass})}/>
 		    				</View>
-		    			</View>
 
-		    			<TouchableWithoutFeedback
-		    				onPress={()=>this.submitCredentials()}>
-			    			<Text style={{
-			    					height: '7%',
-			    					width:'30%',
-			    					left: '35%',
-			    					position: 'relative',
-			    					top: '28%',
-			    					borderWidth:2,
-			    					textAlign: 'center',
-			    					textAlignVertical: 'center',
-			    					borderRadius: 100,
-			    					color: '#000',
-			    					fontSize: 15,
-			    					fontWeight: 'bold'
-			    			}}>
-			    				Submit
-			    			</Text>
-			    		</TouchableWithoutFeedback>
+		    				<View style={{
+		    						height:35,
+		    						width: 230,
+		    						position: 'relative',
+		    						flexDirection: 'row',
+		    						justifyContent: 'center'
+		    				}}>
+		    					<CheckBox
+				    				value={this.state.termsFlag}
+				    				onChange={this.checkBoxForTerms}
+				    				style={{
+				    					width:'10%',
+				    					height:'90%',
+				    					position: 'relative'
+				    				}}/>
+				    			<Text style={{
+				    					height:'100%',
+				    					width: '80%',
+				    					textAlign: 'center',
+				    					textAlignVertical:'center',
+				    					position: 'relative',
+				    					fontSize: 13,
+				    					fontWeight: 'bold',
+				    					left: '5%'
+				    			}}>
+				    				Agree to our terms of service
+				    			</Text>
+		    				</View>
+
+		    				<TouchableWithoutFeedback
+		    					disabled = {this.state.submitted}
+		    					onPress={()=>this.submitCredentials()}>
+			    				<Text style={{
+			    						borderWidth: 1.2,
+									    borderColor: '#ddd',
+									    borderBottomWidth: 0,
+									    shadowColor: '#000',
+									    shadowOffset: {
+											width: 0,
+											height: 5,
+										},
+										shadowOpacity: 0.34,
+										shadowRadius: 6.27,
+										elevation: 10,
+									    backgroundColor: '#fff',
+			    						height: 55,
+			    						width: 140,
+			    						position: 'relative',
+			    						borderRadius: 20,
+			    						fontWeight: 'bold',
+			    						fontSize: 16,
+			    						textAlign: 'center',
+			    						textAlignVertical: 'center',
+			    						top: 10
+			    				}}>
+			    						Submit
+			    				</Text>
+			    			</TouchableWithoutFeedback>
+
+		    				<Text style={{
+		    						height: 45,
+		    						width: 130,
+		    						position: 'relative',
+		    						fontWeight: 'bold',
+		    						fontSize: 16,
+		    						textAlign: 'center',
+		    						textAlignVertical: 'center'
+		    				}}>
+		    				</Text>
+
+
+			    		</ScrollView>
+
+			    		<Text 
+			    			style={{
+			    				height:'9%',
+			    				width:'11%',
+			    				position:'absolute',
+			    				textAlign: 'center',
+			    				textAlignVertical:'center',
+			    				top: '96%',
+			    				left: '3%'
+			    		}}>
+			    			<Icon
+			    				style={{fontSize:30,color:'#000'}}
+			    				name = 'ios-arrow-down'
+			    				type = 'Ionicons'/>
+
+			    		</Text>
+		    		</View>
+		    			
 		    	</View>
 		    </React.Fragment>
 	    );
