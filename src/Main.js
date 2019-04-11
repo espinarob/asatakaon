@@ -191,7 +191,8 @@ export default class Main extends Component{
 																password       : restaurantData.password,
 																key            : String(foodKey.key),
 																role           : String(Constants.ROLES.RESTAURANT_OWNER),
-																placeStatus    : Constants.RESTAURANT_PLACE_STATUS.BLOCKED 
+																placeStatus    : Constants.RESTAURANT_PLACE_STATUS.BLOCKED,
+																acceptBooking  : 'false' 
 															})
 															.then(()=>{
 																this.sendAReportMessage('You have been successfully registered!');
@@ -435,7 +436,7 @@ export default class Main extends Component{
 			});
 	}
 
-	addNewDishInMenu = (dish)=>{
+	addNewDishInMenuWithImage = (dish)=>{
 		this.sendAReportMessage('Adding in your menu, please wait..');
 		setTimeout(()=>this.sendAReportMessage(''),Constants.REPORT_DISPLAY_TIME);
 		this.setState({loadingText:'Submitting information, please wait..'});
@@ -444,33 +445,31 @@ export default class Main extends Component{
 								.database()
 								.ref("RESTAURANT/"+String(this.state.loggedInformation.key)+"/Menu")
 								.push();
-		this.uploadImageForDish(dish.filePath,dishKey.key,'image/jpg')
-			.then((response)=>{
-				dishKey
-					.update({
-						dishImg     : String(response),
-						name        : dish.name,
-						description : dish.dishDescription,
-						persons     : dish.numberOfPersons,
-						key         : String(dishKey.key)
+		dishKey
+			.update({
+				name        : dish.name,
+				foodType    : dish.foodType,
+				price       : dish.price,
+				description : dish.dishDescription,
+				persons     : dish.numberOfPersons,
+				key         : String(dishKey.key)
+			})
+			.then(()=>{
+				firebase
+					.database()
+					.ref("RESTAURANT/"+String(this.state.loggedInformation.key))
+					.once("value",snapshot=>{
+						if(snapshot.exists()){
+							const updatedAccountInformation = JSON.parse(JSON.stringify(snapshot.val()));
+							this.storeCredentialsLocally(updatedAccountInformation);
+							this.setState({loggedInformation:updatedAccountInformation});
+						}
 					})
 					.then(()=>{
-						firebase
-							.database()
-							.ref("RESTAURANT/"+String(this.state.loggedInformation.key))
-							.once("value",snapshot=>{
-								if(snapshot.exists()){
-									const updatedAccountInformation = JSON.parse(JSON.stringify(snapshot.val()));
-									this.storeCredentialsLocally(updatedAccountInformation);
-									this.setState({loggedInformation:updatedAccountInformation});
-								}
-							})
-							.then(()=>{
-								this.setState({loadingText:''});
-								this.changeMainApplicationDisplay(Constants.APP_PAGES.HOME_DASHBOARD);
-								this.sendAReportMessage('Successfully added a dish in your menu');
-								setTimeout(()=>this.sendAReportMessage(''),Constants.REPORT_DISPLAY_TIME);
-							});
+						this.setState({loadingText:''});
+						this.changeMainApplicationDisplay(Constants.APP_PAGES.HOME_DASHBOARD);
+						this.sendAReportMessage('Successfully added a dish in your menu');
+						setTimeout(()=>this.sendAReportMessage(''),Constants.REPORT_DISPLAY_TIME);
 					});
 			})
 			.catch((error)=>{
@@ -479,33 +478,6 @@ export default class Main extends Component{
 				setTimeout(()=>this.sendAReportMessage(''),Constants.REPORT_DISPLAY_TIME);
 			});
 	}
-
-
-	uploadImageForDish = (uri, imageName,mime = 'image/jpg')=>{
-    	return new Promise((resolve, reject) => {
-      		const uploadUri = Platform.OS === 'ios' ? uri.replace('file://', '') : uri;
-      		let uploadBlob  = null;
-     		const imageRef  = firebase.storage().ref('dishImages').child(imageName);
-      		fs.readFile(uploadUri, 'base64')
-      		.then((data) => {
-        		return Blob.build(data, { type: `${mime};BASE64` })
-      		})
-      		.then((blob) => {
-        		uploadBlob = blob
-        		return imageRef.put(blob, { contentType: mime })
-      		})
-      		.then(() => {
-        		uploadBlob.close()
-       			 return imageRef.getDownloadURL()
-     		})
-      		.then((url) => {
-        		resolve(url)
-     		})
-      		.catch((error) => {
-        		reject(error)
-     	 	});
-   		});
-  	}
 
   	deleteADishInMenu = (dishInformation)=>{
   		this.sendAReportMessage('Removing your dish, please wait..');
@@ -851,6 +823,7 @@ export default class Main extends Component{
 				return 	<SplashScreen/>;
 			case Constants.APP_PAGES.FIND_RESTAURANT_APP:
 				return 	<FindRestaurant
+							doUseFirebaseObject    = {firebase}
 							doGetUsersLocation     = {this.state.usersLocation}
 							doChangeMainAppDisplay = {this.changeMainApplicationDisplay} />;
 			case Constants.APP_PAGES.LOGIN_APP_PAGE:

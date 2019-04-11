@@ -27,7 +27,7 @@ import Geolocation   from 'react-native-geolocation-service';
 import Constants from '../commons/Constants.js';
 
 
-const registeredUserIcon = require('../img/icon/registered-user.png');
+const registeredUserIcon = require('../img/icon/anonymous-user.png');
 
 export default class UserHomePage extends Component{
 

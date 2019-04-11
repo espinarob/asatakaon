@@ -8,7 +8,8 @@ import {Platform,
 	AsyncStorage,
 	Image,
 	NetInfo,
-	TouchableWithoutFeedback} 
+	TouchableWithoutFeedback,
+	TextInput} 
 	from 'react-native';
 import {
 	Container, 
@@ -29,7 +30,8 @@ const anonymousUserIcon = require('../img/icon/anonymous-user.png');
 export default class FindRestaurant extends Component{
 
 	state  = {
-		tracksViewChanges: true
+		registeredRestaurants : [],
+		tracksViewChanges     : true
 	}
 
 
@@ -42,6 +44,40 @@ export default class FindRestaurant extends Component{
 		}
 	}
 
+	componentDidMount(){
+		this.getAllRegisteredRestaurants();
+	}
+
+	getAllRegisteredRestaurants = ()=>{
+		this.props.doUseFirebaseObject
+			.database()
+			.ref("RESTAURANT/")
+			.on("value",snapshot=>{
+				if(snapshot.exists()){
+					const initRegisteredRestaurants = [];
+					const allRestaurantsWithKey = JSON.parse(JSON.stringify(snapshot.val()));
+					Object
+						.keys(allRestaurantsWithKey)
+						.forEach((resKey)=>{
+							initRegisteredRestaurants.push(allRestaurantsWithKey[resKey]);
+						});
+					this.setState({registeredRestaurants:initRegisteredRestaurants});
+				}
+			});
+	}
+
+	displayAllApprovedRestaurants = ()=>{
+		return this.state.registeredRestaurants.map((restaurant)=>{
+			if(restaurant.placeStatus == Constants.RESTAURANT_PLACE_STATUS.ACCEPTED && restaurant.location){
+				const jsonLocation = JSON.parse(JSON.stringify(restaurant.location));
+				return 	<Marker
+							tracksViewChanges = {false}
+							coordinate={{latitude:jsonLocation.latitude,
+					      		longitude:jsonLocation.longitude}}
+					      	title = {restaurant.restaurantName} />
+			}
+		});
+	}
 
 	getMapDisplay = ()=>{
 		if(this.props.doGetUsersLocation.latitude){
@@ -53,7 +89,7 @@ export default class FindRestaurant extends Component{
 			                latitudeDelta  : 0.0922*6,
 			                longitudeDelta : 0.0421*6,
 		                }}>
-		                 <Marker
+		                <Marker
 		                 	tracksViewChanges = {false}
 					      	coordinate={{latitude:this.props.doGetUsersLocation.latitude,
 				      			longitude:this.props.doGetUsersLocation.longitude}}
@@ -65,8 +101,8 @@ export default class FindRestaurant extends Component{
 					      		onLoad={this.onLoadIcon}
 					      		source={anonymousUserIcon}
 					      		style={{height:35,width:35}}/>
-					    </Marker>
-
+				    	</Marker>
+				    	{this.displayAllApprovedRestaurants()}
         			</MapView>
 		}
 		else{
@@ -247,9 +283,76 @@ export default class FindRestaurant extends Component{
 		    					OWNER
 		    			</Text>
 		    		</TouchableWithoutFeedback>
+		    		<View style = {{
+		    				height: 50,
+		    				width: '70%',
+		    				borderRadius:15,
+		    				position: 'absolute',
+		    				borderWidth: 1.2,
+						    borderColor: '#ddd',
+						    borderBottomWidth: 0,
+						    shadowColor: '#000',
+						    shadowOffset: {
+								width: 0,
+								height: 5,
+							},
+							shadowOpacity: 0.34,
+							shadowRadius: 6.27,
+							elevation: 10,
+						    backgroundColor: '#fff',
+						    left: '15%',
+						    top: 110,
+						    flexDirection: 'row'
+		    		}}>	
+		    			<Text style ={{
+		    					position:'relative',
+		    					height: '90%',
+		    					width: '15%',
+		    					fontSize: 15,
+		    					color: '#000',
+		    					left: '20%',
+		    					textAlign:'center',
+		    					textAlignVertical: 'center'
+		    			}}>
+		    				<Icon
+		    					style ={{fontSize:20,color:'#000'}}
+		    					name = 'search'
+		    					type = 'FontAwesome'/>
+		    			</Text>
+		    			<View style ={{
+	    						height: '90%',
+	    						width: '65%',
+	    						left:'20%',
+	    						position: 'relative',
+	    						borderBottomWidth: 2,
+	    						borderColor: '#000'
+	    				}}>
+	    					<TextInput
+	    						placeholder = 'Find places' 
+	    						style = {{
+	    							height:'100%',
+	    							width:'100%',
+	    							position: 'relative',
+	    							fontSize: 14,
+	    							textAlignVertical:'center',
+	    							paddingLeft: '2%',
+	    							color: '#000'
+	    						}}/>
 
-		    		
-
+	    				</View>
+	    				<Text style = {{
+	    						height: '90%',
+	    						width: '15%',
+	    						fontSize: 13,
+	    						left: '20%',
+	    						color: '#000',
+	    						textAlignVertical: 'center',
+	    						paddingTop: '2%',
+	    						textAlign: 'center'
+	    				}}>	
+	    					Filter
+	    				</Text>
+		    		</View>
 		    	</View>
 		    </React.Fragment>
 	    );

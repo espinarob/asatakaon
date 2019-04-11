@@ -21,15 +21,16 @@ import {
 import Geolocation   from 'react-native-geolocation-service';
 
 /* -- Custom Components  -- */
-import Constants        from '../commons/Constants.js';
-import ChangePassword   from '../commons/ChangePassword.js';
-import AccountDetails   from '../commons/AccountDetails.js';
-import UserInfo         from '../commons/UserInfo.js';
-import OwnersRestaurant from './OwnersRestaurant.js';
-import OwnersLocation   from './OwnersLocation.js';
-import AddFoodMenu      from './AddFoodMenu.js';
-import FoodMenu         from './FoodMenu.js';
-import Booked           from './Booked.js';
+import Constants         from '../commons/Constants.js';
+import ChangePassword    from '../commons/ChangePassword.js';
+import AccountDetails    from '../commons/AccountDetails.js';
+import UserInfo          from '../commons/UserInfo.js';
+import OwnersLandingPage from './OwnersLandingPage.js';
+import OwnersRestaurant  from './OwnersRestaurant.js';
+import OwnersLocation    from './OwnersLocation.js';
+import AddFoodMenu       from './AddFoodMenu.js';
+import FoodMenu          from './FoodMenu.js';
+import Booked            from './Booked.js';
 
 
 export default class OwnersHomePage extends Component{
@@ -48,6 +49,11 @@ export default class OwnersHomePage extends Component{
 
 	OwnerHomePageDisplay = ()=>{
 		switch(this.state.ownerRoleOperation){
+			case Constants.OWNER_ROLE_PAGES.LANDING_PAGE:
+				return 	<OwnersLandingPage
+							doUseFirebaseObject    = {this.props.doUseFirebaseObject}
+							doGetLoggedInformation = {this.props.doGetLoggedInformation}
+							doSetHomePage          = {this.setHomePage} />;
 			case Constants.COMMON_ROLE_PAGES.USER_INFO:
 				return 	<UserInfo
 							doChangeUserPassword   = {this.props.doChangeUserPassword}
@@ -122,7 +128,7 @@ export default class OwnersHomePage extends Component{
 								shadowOpacity: 0.34,
 								shadowRadius: 6.27,
 								elevation: 10,
-							    backgroundColor: '#fff'
+							     backgroundColor: '#fff'
 						}}>
 							<TouchableWithoutFeedback
 								onPress={()=>this.setHomePage(Constants.OWNER_ROLE_PAGES.LANDING_PAGE)}>
@@ -134,7 +140,7 @@ export default class OwnersHomePage extends Component{
 										textAlignVertical:'center',
 										color: '#000',
 										fontWeight:'bold',
-										fontSize: 14
+										fontSize: 11
 								}}>
 									<Icon
 										style={{fontSize:35}}
@@ -161,7 +167,7 @@ export default class OwnersHomePage extends Component{
 								shadowOpacity: 0.34,
 								shadowRadius: 6.27,
 								elevation: 10,
-							    backgroundColor: '#fff'
+							     backgroundColor: '#fff'
 						}}>
 							<TouchableWithoutFeedback
 								onPress={()=>this.setHomePage(Constants.OWNER_ROLE_PAGES.RESTAURANT_INFO)}> 
@@ -173,7 +179,7 @@ export default class OwnersHomePage extends Component{
 										textAlignVertical:'center',
 										color: '#000',
 										fontWeight:'bold',
-										fontSize: 10.5
+										fontSize: 9
 								}}>
 									<Icon
 										style={{fontSize:35}}
@@ -211,12 +217,12 @@ export default class OwnersHomePage extends Component{
 										textAlignVertical:'center',
 										color: '#000',
 										fontWeight:'bold',
-										fontSize: 12
+										fontSize: 10
 								}}>
 									<Icon
 										style={{fontSize:35}}
 										name = 'bookmarks'
-										type = 'Entypo'/>{'\nBooked'}
+										type = 'Entypo'/>{'\nBooking'}
 								</Text>
 							</TouchableWithoutFeedback>
 						</View>
@@ -235,8 +241,8 @@ export default class OwnersHomePage extends Component{
 								},
 								shadowOpacity: 0.34,
 								shadowRadius: 6.27,
-								elevation: 10,
-							    backgroundColor: '#fff'
+								elevation: 11,
+							     backgroundColor: '#fff'
 						}}>
 							<TouchableWithoutFeedback
 								onPress={()=>this.setHomePage(Constants.COMMON_ROLE_PAGES.USER_INFO)}>
@@ -248,7 +254,7 @@ export default class OwnersHomePage extends Component{
 										textAlignVertical:'center',
 										color: '#000',
 										fontWeight:'bold',
-										fontSize: 11
+										fontSize: 10
 								}}>
 									<Icon
 										style={{fontSize:35}}

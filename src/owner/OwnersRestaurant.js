@@ -117,6 +117,79 @@ export default class OwnersRestaurant extends Component{
 	    					style = {{width:'100%'}}
 		    				contentContainerStyle = {{alignItems:'center',paddingBottom: 30}}>
 		    				<View style = {{
+		    						height: 115,
+		    						width: '90%',
+		    						position: 'relative',
+		    						flexDirection: 'row'
+		    				}}>
+		    					<Text style ={{
+		    							height: '100%',
+		    							position: 'absolute',
+		    							width: '43%',
+		    							backgroundColor: '#8f9091',
+		    							textAlign: 'center',
+		    							textAlignVertical:'center',
+		    							fontSize: 13,
+		    							fontStyle: 'italic'
+		    					}}>	
+		    						{ this.props.doGetLoggedInformation.displayIMG ? 
+		    							'Loading image..':'No added image'}
+		    					</Text>
+		    					{
+		    						this.props.doGetLoggedInformation.displayIMG ?
+		    						<Image
+		    							source = {{uri:this.props.doGetLoggedInformation.displayIMG}}
+		    							style  = {{
+		    								height:'100%',
+		    								width:'100%',
+		    								position:'relative',
+		    								resizeMode: 'contain'
+		    							}}/> : <View style = {{height:'100%',width:'43%',position:'relative'}}></View>
+		    					}
+		    					<View style = {{
+		    							position: 'relative',
+		    							height: '100%',
+		    							width: '56%'
+		    					}}>
+		    						<Text style = {{
+		    								height:'16%',
+		    								width: '100%',
+		    								position: 'relative',
+		    								fontSize: 13,
+		    								fontStyle: 'italic',
+		    								color: '#000',
+		    								paddingLeft: '2%',
+		    								top: '7%'
+		    						}}>
+		    							You may select an image
+		    						</Text>
+
+		    						<Text style ={{
+		    								height: '25%',
+		    								width: '65%',
+		    								position:'relative',
+					    					borderColor: '#ddd',
+										    borderBottomWidth: 0,
+										    shadowColor: '#000',
+										    shadowOffset: {
+												width: 0,
+												height: 2,
+											},
+											shadowOpacity: 0.34,
+											elevation: 6,
+										    backgroundColor: '#fff',
+										    top: '12%',
+										    color: '#000',
+										    textAlignVertical: 'center',
+										    textAlign: 'center',
+										    left: '17%',
+										    borderRadius: 15
+		    						}}>
+		    							Update image
+		    						</Text>
+		    					</View>
+		    				</View>
+		    				<View style = {{
 		    						height: 50,
 		    						width: '90%',
 		    						position: 'relative',
@@ -205,6 +278,37 @@ export default class OwnersRestaurant extends Component{
 		    					}}>
 		    						{(this.props.doGetLoggedInformation.location) ? 
 		    							this.props.doGetLoggedInformation.location.addressName : 'Not updated yet\n(Warning: update only work once)' }
+		    					</Text>
+		    				</View>
+		    				<View style = {{
+		    						height: 62,
+		    						width: '90%',
+		    						position: 'relative',
+		    						flexDirection: 'row',
+		    						marginBottom: 3
+		    				}}>
+		    					<Text style = {{
+		    							height: '100%',
+		    							width: '30%',
+		    							position: 'relative',
+		    							textAlign: 'center',
+		    							textAlignVertical: 'center',
+		    							fontSize : 14,
+		    							color: '#000'
+		    					}}>
+		    						Business Hours:  
+		    					</Text>
+		    					<Text style = {{
+		    							height: '100%',
+		    							width: '57%',
+		    							position: 'relative',
+		    							textAlignVertical: 'center',
+		    							fontSize : 13,
+		    							color: '#000',
+		    							paddingLeft: '2%'
+		    					}}>
+		    						{' '+this.props.doGetLoggedInformation.startingHour+' to '+
+		    						this.props.doGetLoggedInformation.closingHour}
 		    					</Text>
 		    				</View>
 		    				<View style = {{
@@ -312,6 +416,22 @@ export default class OwnersRestaurant extends Component{
 		    				</View>
 
 	    				</ScrollView>
+	    				<Text 
+			    			style={{
+			    				height:'9%',
+			    				width:'11%',
+			    				position:'absolute',
+			    				textAlign: 'center',
+			    				textAlignVertical:'center',
+			    				top: '96%',
+			    				left: '3%'
+			    		}}>
+			    			<Icon
+			    				style={{fontSize:30,color:'#000'}}
+			    				name = 'ios-arrow-down'
+			    				type = 'Ionicons'/>
+
+			    		</Text>
 	    			</View>
 	    		</View>
 	    	</React.Fragment>

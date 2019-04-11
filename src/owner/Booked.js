@@ -25,7 +25,6 @@ import Constants from '../commons/Constants.js';
 
 export default class Booked extends Component{
 
-
 	render(){
 		return(
 			<React.Fragment>
@@ -85,7 +84,8 @@ export default class Booked extends Component{
 						    alignItems: 'center',
 						    paddingTop: '5%',
 						    borderRadius: 25
-	    			}}>
+	    			}}>	
+	    				
 	    			</View>
 	    		</View>
 			</React.Fragment>
