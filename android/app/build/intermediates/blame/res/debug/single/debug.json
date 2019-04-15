@@ -376,6 +376,10 @@
         "source": "C:\\Users\\ACER\\Desktop\\asa-ta-kaon\\AsaTaKaon\\android\\app\\src\\main\\res\\mipmap-hdpi\\ic_launcher.png"
     },
     {
+        "merged": "C:\\Users\\ACER\\Desktop\\asa-ta-kaon\\AsaTaKaon\\android\\app\\build\\intermediates\\res\\merged\\debug\\drawable-mdpi_src_img_icon_owner.png.flat",
+        "source": "C:\\Users\\ACER\\Desktop\\asa-ta-kaon\\AsaTaKaon\\android\\app\\src\\main\\res\\drawable-mdpi\\src_img_icon_owner.png"
+    },
+    {
         "merged": "C:\\Users\\ACER\\Desktop\\asa-ta-kaon\\AsaTaKaon\\android\\app\\build\\intermediates\\res\\merged\\debug\\drawable-hdpi-v4_abc_spinner_mtrl_am_alpha.9.png.flat",
         "source": "C:\\Users\\ACER\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-28.0.0.aar\\936d20d45ef1f12e55e2674ae5600e13\\res\\drawable-hdpi-v4\\abc_spinner_mtrl_am_alpha.9.png"
     },
@@ -1722,6 +1726,10 @@
     {
         "merged": "C:\\Users\\ACER\\Desktop\\asa-ta-kaon\\AsaTaKaon\\android\\app\\build\\intermediates\\res\\merged\\debug\\layout-v21_notification_action.xml.flat",
         "source": "C:\\Users\\ACER\\.gradle\\caches\\transforms-1\\files-1.1\\support-compat-28.0.0.aar\\00d39ac2b25720ecbab6b6f69c9b2a04\\res\\layout-v21\\notification_action.xml"
+    },
+    {
+        "merged": "C:\\Users\\ACER\\Desktop\\asa-ta-kaon\\AsaTaKaon\\android\\app\\build\\intermediates\\res\\merged\\debug\\drawable-mdpi_src_img_icon_restaurantown.png.flat",
+        "source": "C:\\Users\\ACER\\Desktop\\asa-ta-kaon\\AsaTaKaon\\android\\app\\src\\main\\res\\drawable-mdpi\\src_img_icon_restaurantown.png"
     },
     {
         "merged": "C:\\Users\\ACER\\Desktop\\asa-ta-kaon\\AsaTaKaon\\android\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4_abc_text_select_handle_left_mtrl_dark.png.flat",

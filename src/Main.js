@@ -16,11 +16,6 @@ import SyncStorage   from 'sync-storage';
 import RNFetchBlob   from 'react-native-fetch-blob';
 import Geolocation   from 'react-native-geolocation-service';
 
-const Blob = RNFetchBlob.polyfill.Blob;
-const fs = RNFetchBlob.fs;
-window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest;
-window.Blob = Blob;
-
 /* === User Created Components  === */
 
 import Constants            from './commons/Constants.js';
@@ -266,7 +261,7 @@ export default class Main extends Component{
 
 					if(String(finalAccountInfo.password) == String(loginData.password)){
 						this.setState({loadingText:Constants.LOADING_TEXT.LOGGING_IN});
-						this.sendAReportMessage('Successfully logged in to the application');
+						this.sendAReportMessage('Successfully logged into the application');
 						this.changeMainApplicationDisplay(Constants.APP_PAGES.LOADING_SCREEN_APP);
 						this.storeCredentialsLocally(finalAccountInfo);
 						this.setState({loggedInformation:finalAccountInfo});
@@ -436,7 +431,7 @@ export default class Main extends Component{
 			});
 	}
 
-	addNewDishInMenuWithImage = (dish)=>{
+	addNewDishInMenu = (dish)=>{
 		this.sendAReportMessage('Adding in your menu, please wait..');
 		setTimeout(()=>this.sendAReportMessage(''),Constants.REPORT_DISPLAY_TIME);
 		this.setState({loadingText:'Submitting information, please wait..'});
@@ -481,35 +476,32 @@ export default class Main extends Component{
 
   	deleteADishInMenu = (dishInformation)=>{
   		this.sendAReportMessage('Removing your dish, please wait..');
-  		firebase
-  			.storage()
-  			.ref('dishImages')
-  			.child(dishInformation.key)
-  			.delete()
-  			.then(()=>{
-  				firebase
-  					.database()
-  					.ref("RESTAURANT/"
-  						+String(this.state.loggedInformation.key)
-  						+"/Menu/"
-  						+String(dishInformation.key))
-  					.remove()
-  					.then(()=>{
-  						firebase
-							.database()
-							.ref("RESTAURANT/"+String(this.state.loggedInformation.key))
-							.once("value",snapshot=>{
-								if(snapshot.exists()){
-									const updatedAccountInformation = JSON.parse(JSON.stringify(snapshot.val()));
-									this.storeCredentialsLocally(updatedAccountInformation);
-									this.setState({loggedInformation:updatedAccountInformation});
-								}
-							})
-							.then(()=>{
-								this.sendAReportMessage('Succesfully removed in your menu');
-  								setTimeout(()=>this.sendAReportMessage(''),Constants.REPORT_DISPLAY_TIME);
-							});
-  					});
+		firebase
+			.database()
+			.ref("RESTAURANT/"
+				+String(this.state.loggedInformation.key)
+				+"/Menu/"
+				+String(dishInformation.key))
+			.remove()
+			.then(()=>{
+				firebase
+				.database()
+				.ref("RESTAURANT/"+String(this.state.loggedInformation.key))
+				.once("value",snapshot=>{
+					if(snapshot.exists()){
+						const updatedAccountInformation = JSON.parse(JSON.stringify(snapshot.val()));
+						this.storeCredentialsLocally(updatedAccountInformation);
+						this.setState({loggedInformation:updatedAccountInformation});
+					}
+					else{
+						this.sendAReportMessage('Succesfully removed in your menu');
+						setTimeout(()=>this.sendAReportMessage(''),Constants.REPORT_DISPLAY_TIME);
+					}
+				})
+				.then(()=>{
+					this.sendAReportMessage('Succesfully removed in your menu');
+					setTimeout(()=>this.sendAReportMessage(''),Constants.REPORT_DISPLAY_TIME);
+				});
   			})
   			.catch((error)=>{
   				this.sendAReportMessage('Error in conneting to the server');
@@ -700,7 +692,6 @@ export default class Main extends Component{
 		}
 		NetInfo.isConnected.addEventListener('connectionChange',this.handleDataConnectivity);
 		this.askUserGPSPermission();
-		this.getUserLocation();
 	}
 
 	signOutAccount = ()=>{
@@ -748,21 +739,18 @@ export default class Main extends Component{
 	}
 
 	getUserLocation = ()=>{
-		console.log('Getting location...');
 		Geolocation.getCurrentPosition( (position)=>{
 			console.log('Got location');
 			this.setState({usersLocation:position.coords});
 		},(error) => {
 			console.log(JSON.stringify(error));
-			this.setState({usersLocation:[]});
 		},{enableHighAccuracy: true});
 		
 		Geolocation.watchPosition( (position)=>{
-			console.log('Got location');
+			console.log('Got location updated');
 			this.setState({usersLocation:position.coords});
 		},(error) => {
 			console.log(JSON.stringify(error));
-			this.setState({usersLocation:[]});
 		},{enableHighAccuracy: true,distanceFilter:10,fastestInterval:4000});
 	}
 
@@ -810,6 +798,11 @@ export default class Main extends Component{
 		this.setState({applicationPages:applicationPages});
 	}
 
+	setLoggedInformation = (accountInformation)=>{
+		this.setState({loggedInformation:accountInformation});
+		this.storeCredentialsLocally(accountInformation);
+	}
+
 
 	MainApplicationDisplay = ()=>{
 		switch(this.state.applicationPages){
@@ -848,6 +841,7 @@ export default class Main extends Component{
 							doSignOutAccount       = {this.signOutAccount}
 							doGetUsersLocation     = {this.state.usersLocation}
 							doSendAReportMessage   = {this.sendAReportMessage}
+							doSetLoggedInformation = {this.setLoggedInformation}
 							doGetLoggedInformation = {this.state.loggedInformation}
 							doChangeUserPassword   = {this.userChangePassword}
 							doSetRestaurantAddress = {this.submitRestaurantOwnersLocation}

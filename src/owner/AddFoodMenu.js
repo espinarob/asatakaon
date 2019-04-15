@@ -19,9 +19,6 @@ import {
 	Icon,
 	Spinner} 
 	from 'native-base';
-import SyncStorage   from 'sync-storage';
-import ImagePicker from 'react-native-image-picker';
-
 
 /* -- Custom Components  -- */
 import Constants from '../commons/Constants.js';
@@ -154,7 +151,6 @@ export default class OwnersLocation extends Component{
 	    			</View>
 
 	    			<View style={{
-		    				borderWidth: 1.2,
 						    borderColor: '#ddd',
 						    borderBottomWidth: 0,
 						    shadowColor: '#000',
@@ -291,7 +287,7 @@ export default class OwnersLocation extends Component{
 			    					top: '4%'
 			    			}}>
 			    				<TextInput
-			    					placeholder = 'Input current price'
+			    					placeholder = 'Input price in pesos'
 			    					style={{
 			    						width:'90%',
 			    						height:'100%',
@@ -416,7 +412,6 @@ export default class OwnersLocation extends Component{
 		    							height: 46,
 				    					width:'40%',
 				    					position:'relative',
-				    					borderWidth: 1.2,
 									    borderColor: '#ddd',
 									    borderBottomWidth: 0,
 									    shadowColor: '#000',

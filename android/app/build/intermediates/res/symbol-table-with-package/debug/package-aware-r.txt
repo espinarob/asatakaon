@@ -685,7 +685,9 @@ drawable notify_panel_notification_icon_bg
 drawable src_img_background
 drawable src_img_content_content_2
 drawable src_img_icon_anonymoususer
+drawable src_img_icon_owner
 drawable src_img_icon_registereduser
+drawable src_img_icon_restaurantown
 drawable tooltip_frame_dark
 drawable tooltip_frame_light
 id ALT

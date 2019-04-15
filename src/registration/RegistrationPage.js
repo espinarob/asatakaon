@@ -189,9 +189,10 @@ export default class RegistrationPage extends Component{
 		    				textAlignVertical:'center',
 		    				textAlign: 'center',
 		    				borderRadius:20,
-		    				fontSize: 20,
+		    				fontSize: 14,
 		    				fontWeight: 'bold',
-		    				top: '12%'
+		    				top: '12%',
+			    			color: '#000'			
 		    		}}>	
 		    			User Registration
 		    		</Text>
@@ -225,7 +226,8 @@ export default class RegistrationPage extends Component{
 		    						position: 'relative',
 		    						textAlign: 'center',
 		    						fontSize: 16,
-		    						fontWeight: 'bold'
+		    						fontWeight: 'bold',
+		    						color: '#000'
 		    				}}>
 		    					First Name
 		    				</Text>
@@ -245,7 +247,8 @@ export default class RegistrationPage extends Component{
 		    							width: '100%',
 		    							position: 'relative',
 		    							fontSize: 15,
-		    							textAlign:'center'
+		    							textAlign:'center',
+		    							color: '#000'
 		    						}}
 		    						onChangeText={(inputFirstName)=>this.setState({inputFirstName})}/>
 		    				</View>
@@ -256,7 +259,8 @@ export default class RegistrationPage extends Component{
 		    						position: 'relative',
 		    						textAlign: 'center',
 		    						fontSize: 16,
-		    						fontWeight: 'bold'
+		    						fontWeight: 'bold',
+		    						color: '#000'
 		    				}}>
 		    					Last Name
 		    				</Text>
@@ -276,7 +280,8 @@ export default class RegistrationPage extends Component{
 		    							width: '100%',
 		    							position: 'relative',
 		    							fontSize: 15,
-		    							textAlign:'center'
+		    							textAlign:'center',
+		    							color: '#000'
 		    						}}
 		    						onChangeText={(inputLastName)=>this.setState({inputLastName})}/>
 		    				</View>
@@ -287,7 +292,8 @@ export default class RegistrationPage extends Component{
 		    						position: 'relative',
 		    						textAlign: 'center',
 		    						fontSize: 16,
-		    						fontWeight: 'bold'
+		    						fontWeight: 'bold',
+		    						color: '#000'
 		    				}}>
 		    					Address
 		    				</Text>
@@ -307,6 +313,7 @@ export default class RegistrationPage extends Component{
 		    							width: '100%',
 		    							position: 'relative',
 		    							fontSize: 15,
+		    							color: '#000',
 		    							textAlign:'center'
 		    						}}
 		    						onChangeText={(inputAddress)=>this.setState({inputAddress})}/>
@@ -318,7 +325,8 @@ export default class RegistrationPage extends Component{
 		    						position: 'relative',
 		    						textAlign: 'center',
 		    						fontSize: 16,
-		    						fontWeight: 'bold'
+		    						fontWeight: 'bold',
+		    						color: '#000'
 		    				}}>
 		    					E-mail Address
 		    				</Text>
@@ -338,7 +346,8 @@ export default class RegistrationPage extends Component{
 		    							width: '100%',
 		    							position: 'relative',
 		    							fontSize: 15,
-		    							textAlign:'center'
+		    							textAlign:'center',
+		    							color: '#000'
 		    						}}
 		    						onChangeText={(inputEmail)=>this.setState({inputEmail})}/>
 		    				</View>
@@ -349,7 +358,8 @@ export default class RegistrationPage extends Component{
 		    						position: 'relative',
 		    						textAlign: 'center',
 		    						fontSize: 16,
-		    						fontWeight: 'bold'
+		    						fontWeight: 'bold',
+		    						color: '#000'
 		    				}}>
 		    					Gender
 		    				</Text>
@@ -385,7 +395,8 @@ export default class RegistrationPage extends Component{
 		    						position: 'relative',
 		    						textAlign: 'center',
 		    						fontSize: 14,
-		    						fontWeight: 'bold'
+		    						fontWeight: 'bold',
+		    						color: '#000'
 		    				}}>
 		    					Username {'(minimum of '+
 		    					Constants.CREDENTIALS_POLICY.MIN_USERNAME + ' characters)'}
@@ -406,7 +417,8 @@ export default class RegistrationPage extends Component{
 		    							width: '100%',
 		    							position: 'relative',
 		    							fontSize: 15,
-		    							textAlign:'center'
+		    							textAlign:'center',
+		    							color: '#000'
 		    						}}
 		    						onChangeText={(inputUsername)=>this.setState({inputUsername})}/>
 		    				</View>
@@ -417,7 +429,8 @@ export default class RegistrationPage extends Component{
 		    						position: 'relative',
 		    						textAlign: 'center',
 		    						fontSize: 16,
-		    						fontWeight: 'bold'
+		    						fontWeight: 'bold',
+		    						color: '#000'
 		    				}}>
 		    					Password
 		    				</Text>
@@ -438,7 +451,8 @@ export default class RegistrationPage extends Component{
 		    							width: '100%',
 		    							position: 'relative',
 		    							fontSize: 15,
-		    							textAlign:'center'
+		    							textAlign:'center',
+		    							color: '#000'
 		    						}}
 		    						onChangeText={(inputPassword)=>this.setState({inputPassword})}/>
 		    				</View>
@@ -450,7 +464,8 @@ export default class RegistrationPage extends Component{
 		    						position: 'relative',
 		    						textAlign: 'center',
 		    						fontSize: 16,
-		    						fontWeight: 'bold'
+		    						fontWeight: 'bold',
+		    						color: '#000'
 		    				}}>
 		    					Confirm Password
 		    				</Text>
@@ -471,7 +486,8 @@ export default class RegistrationPage extends Component{
 		    							width: '100%',
 		    							position: 'relative',
 		    							fontSize: 15,
-		    							textAlign:'center'
+		    							textAlign:'center',
+		    							color: '#000'
 		    						}}
 		    						onChangeText={(inputConfirmPass)=>this.setState({inputConfirmPass})}/>
 		    				</View>
@@ -499,7 +515,8 @@ export default class RegistrationPage extends Component{
 				    					position: 'relative',
 				    					fontSize: 13,
 				    					fontWeight: 'bold',
-				    					left: '5%'
+				    					left: '5%',
+				    					color: '#000'
 				    			}}>
 				    				Agree to our terms of service
 				    			</Text>
@@ -529,7 +546,8 @@ export default class RegistrationPage extends Component{
 			    						fontSize: 16,
 			    						textAlign: 'center',
 			    						textAlignVertical: 'center',
-			    						top: 10
+			    						top: 10,
+			    						color: '#000'
 			    				}}>
 			    						Submit
 			    				</Text>

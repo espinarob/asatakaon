@@ -4,10 +4,17 @@ const Constants = {
 		USER_ONLY            : 'USER_ONLY',
 		DEFAULT_INFO         : 'DEFAULT_INFO'
 	},
- 
+ 	BOOKING_STATUS           : {
+ 		PENDING              : 'PENDING',
+ 		BOOKED               : 'BOOKED',
+ 		DENIED               : 'DENIED',
+ 		CLAIMED              : 'CLAIMED'
+ 	},
 	USER_ROLE_PAGES          : {
 		LANDING_PAGE         : 'LANDING_PAGE',
 		BOOKINGS             : 'BOOKINGS',
+		REQUESTS             : 'REQUESTS',
+		RESTAURANT_DETAILS   : 'RESTAURANT_DETAILS'
 	},
 
 	OWNER_ROLE_PAGES         : {
@@ -77,7 +84,7 @@ const Constants = {
     		skipBackup          : true,
     		path                : 'images'
   		},
-  		quality                 : 0.7,
+  		quality                 : 0.6,
   		maxWidth                : 500, 
   		maxHeight               : 450.
 	},

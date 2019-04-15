@@ -21,18 +21,20 @@ import {
 import Geolocation   from 'react-native-geolocation-service';
 
 /* -- Custom Components  -- */
-import Constants      from '../commons/Constants.js';
-import UserInfo       from '../commons/UserInfo.js';
-import ChangePassword from '../commons/ChangePassword.js';
-import AccountDetails from '../commons/AccountDetails.js';
-import BookingsPage   from './BookingsPage.js';
-import LandingPage    from './LandingPage.js';
-
+import Constants             from '../commons/Constants.js';
+import UserInfo              from '../commons/UserInfo.js';
+import ChangePassword        from '../commons/ChangePassword.js';
+import AccountDetails        from '../commons/AccountDetails.js';
+import BookingsPage          from './BookingsPage.js';
+import LandingPage           from './LandingPage.js';
+import RestaurantDetailsPage from './RestaurantDetailsPage.js';
+import RequestsPage          from './RequestsPage.js';
 
 export default class UserHomePage extends Component{
 
 	state = {
-		userRoleOperation : Constants.USER_ROLE_PAGES.LANDING_PAGE
+		userRoleOperation : Constants.USER_ROLE_PAGES.LANDING_PAGE,
+		pressedRestaurantDetails : {}
 	}
 
 	setHomePage = (content)=>{
@@ -40,15 +42,29 @@ export default class UserHomePage extends Component{
 		this.setState({userRoleOperation:content});
 	}
 
+	setPressedRestaurantDetails = (restaurant)=>{
+		this.setState({pressedRestaurantDetails:restaurant});
+	}
+
 
 	UserHomePageDisplay =()=>{
 		switch(this.state.userRoleOperation){
+			case Constants.USER_ROLE_PAGES.REQUESTS:
+				return 	<RequestsPage
+							doSetLoggedInformation = {this.props.doSetLoggedInformation}
+							doUseFirebaseObject    = {this.props.doUseFirebaseObject}
+							doGetLoggedInformation = {this.props.doGetLoggedInformation}/>;
 			case Constants.USER_ROLE_PAGES.LANDING_PAGE:
 				return 	<LandingPage
+							doSetRestaurantDetails = {this.setPressedRestaurantDetails}
+							doUseFirebaseObject    = {this.props.doUseFirebaseObject}
 							doSetHomePage          = {this.setHomePage}
+							doSendAReportMessage   = {this.props.doSendAReportMessage}
 							doGetUsersLocation     = {this.props.doGetUsersLocation} />;
 			case Constants.USER_ROLE_PAGES.BOOKINGS:
-				return 	<BookingsPage />;
+				return 	<BookingsPage 
+							doUseFirebaseObject    = {this.props.doUseFirebaseObject}
+							doGetLoggedInformation = {this.props.doGetLoggedInformation}/>;
 			case Constants.COMMON_ROLE_PAGES.USER_INFO:
 				return 	<UserInfo
 							doChangeUserPassword   = {this.props.doChangeUserPassword}
@@ -66,13 +82,22 @@ export default class UserHomePage extends Component{
 							doSetHomePage          = {this.setHomePage}
 							doUpdateUserInfo       = {this.props.doUpdateUserInfo}
 							doGetLoggedInformation = {this.props.doGetLoggedInformation} />;
+			case Constants.USER_ROLE_PAGES.RESTAURANT_DETAILS:
+				return 	<RestaurantDetailsPage
+							doSetLoggedInformation = {this.props.doSetLoggedInformation}
+							doUseFirebaseObject    = {this.props.doUseFirebaseObject}
+							doGetLoggedInformation = {this.props.doGetLoggedInformation}
+							doSendAReportMessage   = {this.props.doSendAReportMessage}
+							doGetRestaurantDetails = {this.state.pressedRestaurantDetails}
+							doSetHomePage          = {this.setHomePage}/>;
 		}
 	}
 
 	UserHomePageTabs = ()=>{
 		if(this.state.userRoleOperation == Constants.COMMON_ROLE_PAGES.USER_INFO
 			|| this.state.userRoleOperation == Constants.USER_ROLE_PAGES.LANDING_PAGE 
-			|| this.state.userRoleOperation == Constants.USER_ROLE_PAGES.BOOKINGS ){
+			|| this.state.userRoleOperation == Constants.USER_ROLE_PAGES.BOOKINGS
+			|| this.state.userRoleOperation == Constants.USER_ROLE_PAGES.REQUESTS ){
 			return 	<View style={{
 							height: '13.5%',
 							width:'100%',
@@ -86,7 +111,6 @@ export default class UserHomePage extends Component{
 								width: 65,
 								position:'relative',
 								borderRadius: 90,
-								borderWidth: 1.2,
 							    borderColor: '#ddd',
 							    borderBottomWidth: 0,
 							    shadowColor: '#000',
@@ -109,7 +133,7 @@ export default class UserHomePage extends Component{
 										textAlignVertical:'center',
 										color: '#000',
 										fontWeight:'bold',
-										fontSize: 14
+										fontSize: 10
 								}}>
 									<Icon
 										style={{fontSize:35}}
@@ -119,12 +143,49 @@ export default class UserHomePage extends Component{
 							</TouchableWithoutFeedback>
 						</View>
 
+
 						<View style={{
 								height:65,
 								width: 65,
 								position:'relative',
 								borderRadius: 90,
-								borderWidth: 1.2,
+							    borderColor: '#ddd',
+							    borderBottomWidth: 0,
+							    shadowColor: '#000',
+							    shadowOffset: {
+									width: 0,
+									height: 5,
+								},
+								shadowOpacity: 0.34,
+								shadowRadius: 6.27,
+								elevation: 10,
+							    backgroundColor: '#fff'
+						}}>
+							<TouchableWithoutFeedback
+								onPress={()=>this.setHomePage(Constants.USER_ROLE_PAGES.REQUESTS)}> 
+								<Text style={{
+										height:'100%',
+										width:'100%',
+										position:'relative',
+										textAlign:'center',
+										textAlignVertical:'center',
+										color: '#000',
+										fontWeight:'bold',
+										fontSize: 10
+								}}>
+									<Icon
+										style={{fontSize:35}}
+										name = 'add-to-list'
+										type = 'Entypo'/>{'\nRequests'}
+								</Text>
+							</TouchableWithoutFeedback>
+						</View>
+
+						<View style={{
+								height:65,
+								width: 65,
+								position:'relative',
+								borderRadius: 90,
 							    borderColor: '#ddd',
 							    borderBottomWidth: 0,
 							    shadowColor: '#000',
@@ -147,7 +208,7 @@ export default class UserHomePage extends Component{
 										textAlignVertical:'center',
 										color: '#000',
 										fontWeight:'bold',
-										fontSize: 12
+										fontSize: 10
 								}}>
 									<Icon
 										style={{fontSize:35}}
@@ -162,7 +223,6 @@ export default class UserHomePage extends Component{
 								width: 65,
 								position:'relative',
 								borderRadius: 90,
-								borderWidth: 1.2,
 							    borderColor: '#ddd',
 							    borderBottomWidth: 0,
 							    shadowColor: '#000',
@@ -185,7 +245,7 @@ export default class UserHomePage extends Component{
 										textAlignVertical:'center',
 										color: '#000',
 										fontWeight:'bold',
-										fontSize: 11
+										fontSize: 10
 								}}>
 									<Icon
 										style={{fontSize:35}}

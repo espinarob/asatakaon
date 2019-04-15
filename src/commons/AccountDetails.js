@@ -256,6 +256,7 @@ export default class AccountDetails extends Component{
 		    						textAlign: 'center',
 		    						textAlignVertical: 'center',
 		    						top: 45,
+		    						color: '#000',
 		    						marginBottom: 25
 		    				}}>
 		    						Submit

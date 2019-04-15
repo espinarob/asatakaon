@@ -19,10 +19,15 @@ import {
 	Icon,
 	Spinner} 
 	from 'native-base';
-import SyncStorage   from 'sync-storage';
-import MapView       from 'react-native-maps';
-import {Marker}      from 'react-native-maps';
+import RNFetchBlob   from 'react-native-fetch-blob';
+import ImagePicker   from 'react-native-image-picker';
 import Geolocation   from 'react-native-geolocation-service';
+
+const Blob = RNFetchBlob.polyfill.Blob;
+const fs = RNFetchBlob.fs;
+window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest;
+window.Blob = Blob;
+
 
 /* -- Custom Components  -- */
 import Constants from '../commons/Constants.js';
@@ -30,6 +35,16 @@ import Constants from '../commons/Constants.js';
 
 export default class OwnersRestaurant extends Component{
 	
+	state = {
+		imagePath     : '',
+		imageFileName : ''
+	}
+
+
+	componentDidMount(){
+
+	}
+
 	editRestaurantAddress = ()=>{
 		if(this.props.doGetLoggedInformation.location){
 			this.props.doSendAReportMessage('Already edited once, send us a message or a report');
@@ -42,9 +57,163 @@ export default class OwnersRestaurant extends Component{
 		}
 	}
 
-	componentDidMount(){
-
+	removePhoto = ()=>{
+		if(!this.props.doGetLoggedInformation.displayIMG){
+			this.props.doSendAReportMessage('You haven\'t set any display image yet');
+			setTimeout(()=>{
+				this.props.doSendAReportMessage('');
+			},Constants.REPORT_DISPLAY_TIME);
+		}
+		else{
+			this.props.doSendAReportMessage('Removing displayed image, please wait..');
+			this.props.doUseFirebaseObject
+				.storage()
+				.ref('restaurantImages')
+				.child(String(this.props.doGetLoggedInformation.key))
+				.delete()
+				.then(()=>{
+					this.props.doUseFirebaseObject
+						.database()
+						.ref("RESTAURANT/"
+							+String(this.props.doGetLoggedInformation.key)
+							+"/displayIMG")
+						.remove()
+						.then(()=>{
+							this.props.doUseFirebaseObject
+								.database()
+								.ref("RESTAURANT/"+String(this.props.doGetLoggedInformation.key))
+								.once("value",snapshot=>{
+									if(snapshot.exists()){
+										const updatedAccountDetails = JSON.parse(JSON.stringify(snapshot.val()));
+										this.props.doSetLoggedInformation(updatedAccountDetails);
+									}
+								})
+								.then(()=>{
+									this.props.doSendAReportMessage('Successfully removed the displayed image');
+							    	setTimeout(()=>{
+										this.props.doSendAReportMessage('');
+									},Constants.REPORT_DISPLAY_TIME);	
+								});
+						});
+				})	
+				.catch((error)=>{
+					this.props.doSendAReportMessage('An error has occured, try again');
+			    	setTimeout(()=>{
+						this.props.doSendAReportMessage('');
+					},Constants.REPORT_DISPLAY_TIME);
+				});
+		}
 	}
+
+	selectPhoto = ()=>{
+		ImagePicker.showImagePicker(Constants.SELECT_PHOTO_OPTIONS, (response) => {
+		  if (response.didCancel) {
+		    console.log('User cancelled image picker');
+		  } 
+		  else if (response.error) {
+		    console.log('ImagePicker Error: ', response.error);
+		  } 
+		  else if (response.customButton) {
+		    console.log('User tapped custom button: ', response.customButton);
+		  } 
+		  else {
+		  	this.props.doSendAReportMessage('Setting as display image, please wait..');
+	    	this.setState({
+		     	imagePath     : response.uri,
+		     	imageFileName : response.fileName
+		    });
+		    if(response.fileSize>Constants.LOCAL_IMAGE_FILE_SIZE_LIMIT){
+		    	this.props.doSendAReportMessage('Error: No greater than'
+		    		+String(Number(Constants.LOCAL_IMAGE_FILE_SIZE_LIMIT/1000))
+		    		+'MB file');
+		    	setTimeout(()=>{
+					this.props.doSendAReportMessage('');
+				},Constants.REPORT_DISPLAY_TIME);
+		    }
+		    else{
+			    if(response.type){
+			    	if(response.type == 'image/jpeg' || response.type == 'jpeg' ||  
+			    		response.type == 'image/jpg'){
+			    		this.uploadRestaurantImage(String(response.uri),
+			    			String(this.props.doGetLoggedInformation.key),
+			    			'image/jpg')
+				    			.then((response)=>{
+				    				this.props.doUseFirebaseObject
+				    					.database()
+				    					.ref("RESTAURANT/"
+				    						+String(this.props.doGetLoggedInformation.key))
+				    					.update({
+				    						'displayIMG' : String(response)
+				    					})
+				    					.then(()=>{
+				    						this.props.doUseFirebaseObject
+				    							.database()
+				    							.ref("RESTAURANT/"+String(this.props.doGetLoggedInformation.key))
+				    							.once("value",snapshot=>{
+				    								if(snapshot.exists()){
+				    									const updatedAccountDetails = JSON.parse(JSON.stringify(snapshot.val()));
+				    									this.props.doSetLoggedInformation(updatedAccountDetails);
+				    								}
+				    							})
+				    							.then(()=>{
+				    								this.props.doSendAReportMessage('Successfully updated restaurant information');
+											    	setTimeout(()=>{
+														this.props.doSendAReportMessage('');
+													},Constants.REPORT_DISPLAY_TIME);
+				    							});
+				    					});
+				    			})
+				    			.catch((error)=>{
+				    				this.props.doSendAReportMessage('An error has occured, please try again');
+							    	setTimeout(()=>{
+										this.props.doSendAReportMessage('');
+									},Constants.REPORT_DISPLAY_TIME);
+				    			});
+			    	}
+			    	else{
+			    		this.props.doSendAReportMessage('Invalid image file, try again');
+				    	setTimeout(()=>{
+							this.props.doSendAReportMessage('');
+						},Constants.REPORT_DISPLAY_TIME);
+				    }
+			    }
+			    else{
+			    	this.props.doSendAReportMessage('Invalid image file, try again');
+			    	setTimeout(()=>{
+						this.props.doSendAReportMessage('');
+					},Constants.REPORT_DISPLAY_TIME);
+			    }
+			}
+		  }
+		});
+	}
+
+
+	uploadRestaurantImage = (uri,imageName,mime = 'image/jpg')=>{
+    	return new Promise((resolve, reject) => {
+      		const uploadUri = Platform.OS === 'ios' ? uri.replace('file://', '') : uri;
+      		let uploadBlob  = null;
+     		const imageRef  = this.props.doUseFirebaseObject.storage().ref('restaurantImages').child(imageName);
+      		fs.readFile(uploadUri, 'base64')
+      		.then((data) => {
+        		return Blob.build(data, { type: `${mime};BASE64` })
+      		})
+      		.then((blob) => {
+        		uploadBlob = blob
+        		return imageRef.put(blob, { contentType: mime })
+      		})
+      		.then(() => {
+        		uploadBlob.close()
+       			 return imageRef.getDownloadURL()
+     		})
+      		.then((url) => {
+        		resolve(url)
+     		})
+      		.catch((error) => {
+        		reject(error)
+     	 	});
+   		});
+  	}
 
 	render() {
 	    return (
@@ -126,14 +295,13 @@ export default class OwnersRestaurant extends Component{
 		    							height: '100%',
 		    							position: 'absolute',
 		    							width: '43%',
-		    							backgroundColor: '#8f9091',
 		    							textAlign: 'center',
 		    							textAlignVertical:'center',
 		    							fontSize: 13,
 		    							fontStyle: 'italic'
 		    					}}>	
 		    						{ this.props.doGetLoggedInformation.displayIMG ? 
-		    							'Loading image..':'No added image'}
+		    							'Loading..':'No image'}
 		    					</Text>
 		    					{
 		    						this.props.doGetLoggedInformation.displayIMG ?
@@ -141,7 +309,7 @@ export default class OwnersRestaurant extends Component{
 		    							source = {{uri:this.props.doGetLoggedInformation.displayIMG}}
 		    							style  = {{
 		    								height:'100%',
-		    								width:'100%',
+		    								width:'43%',
 		    								position:'relative',
 		    								resizeMode: 'contain'
 		    							}}/> : <View style = {{height:'100%',width:'43%',position:'relative'}}></View>
@@ -163,30 +331,58 @@ export default class OwnersRestaurant extends Component{
 		    						}}>
 		    							You may select an image
 		    						</Text>
-
-		    						<Text style ={{
-		    								height: '25%',
-		    								width: '65%',
-		    								position:'relative',
-					    					borderColor: '#ddd',
-										    borderBottomWidth: 0,
-										    shadowColor: '#000',
-										    shadowOffset: {
-												width: 0,
-												height: 2,
-											},
-											shadowOpacity: 0.34,
-											elevation: 6,
-										    backgroundColor: '#fff',
-										    top: '12%',
-										    color: '#000',
-										    textAlignVertical: 'center',
-										    textAlign: 'center',
-										    left: '17%',
-										    borderRadius: 15
-		    						}}>
-		    							Update image
-		    						</Text>
+		    						<TouchableWithoutFeedback
+		    							onPress = {()=>this.selectPhoto()}>
+			    						<Text style ={{
+			    								height: '25%',
+			    								width: '67%',
+			    								position:'relative',
+						    					borderColor: '#ddd',
+											    borderBottomWidth: 0,
+											    shadowColor: '#000',
+											    shadowOffset: {
+													width: 0,
+													height: 2,
+												},
+												shadowOpacity: 0.34,
+												elevation: 6,
+											    backgroundColor: '#fff',
+											    top: '12%',
+											    color: '#000',
+											    textAlignVertical: 'center',
+											    textAlign: 'center',
+											    left: '17%',
+											    borderRadius: 15
+			    						}}>
+			    							Update image
+			    						</Text>
+			    					</TouchableWithoutFeedback>
+			    					<TouchableWithoutFeedback
+			    						onPress = {()=>this.removePhoto()}>
+			    						<Text style ={{
+			    								height: '25%',
+			    								width: '67%',
+			    								position:'relative',
+						    					borderColor: '#ddd',
+											    borderBottomWidth: 0,
+											    shadowColor: '#000',
+											    shadowOffset: {
+													width: 0,
+													height: 2,
+												},
+												shadowOpacity: 0.34,
+												elevation: 6,
+											    backgroundColor: '#fff',
+											    top: '25%',
+											    color: '#000',
+											    textAlignVertical: 'center',
+											    textAlign: 'center',
+											    left: '17%',
+											    borderRadius: 15
+			    						}}>
+			    							Remove image
+			    						</Text>
+			    					</TouchableWithoutFeedback>
 		    					</View>
 		    				</View>
 		    				<View style = {{

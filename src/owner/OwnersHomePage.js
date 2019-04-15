@@ -18,7 +18,6 @@ import {
 	Icon,
 	Spinner} 
 	from 'native-base';
-import Geolocation   from 'react-native-geolocation-service';
 
 /* -- Custom Components  -- */
 import Constants         from '../commons/Constants.js';
@@ -51,8 +50,10 @@ export default class OwnersHomePage extends Component{
 		switch(this.state.ownerRoleOperation){
 			case Constants.OWNER_ROLE_PAGES.LANDING_PAGE:
 				return 	<OwnersLandingPage
+							doSetLoggedInformation = {this.props.doSetLoggedInformation}
 							doUseFirebaseObject    = {this.props.doUseFirebaseObject}
 							doGetLoggedInformation = {this.props.doGetLoggedInformation}
+							doSendAReportMessage   = {this.props.doSendAReportMessage}
 							doSetHomePage          = {this.setHomePage} />;
 			case Constants.COMMON_ROLE_PAGES.USER_INFO:
 				return 	<UserInfo
@@ -73,8 +74,10 @@ export default class OwnersHomePage extends Component{
 							doGetLoggedInformation = {this.props.doGetLoggedInformation} />;
 			case Constants.OWNER_ROLE_PAGES.RESTAURANT_INFO:
 				return 	<OwnersRestaurant
+							doUseFirebaseObject    = {this.props.doUseFirebaseObject}
 							doSendAReportMessage   = {this.props.doSendAReportMessage}
 							doSetHomePage          = {this.setHomePage}
+							doSetLoggedInformation = {this.props.doSetLoggedInformation}
 							doGetLoggedInformation = {this.props.doGetLoggedInformation} />;
 			case Constants.OWNER_ROLE_PAGES.RESTAURANT_LOCATION:
 				return 	<OwnersLocation 
@@ -117,7 +120,6 @@ export default class OwnersHomePage extends Component{
 								width: 65,
 								position:'relative',
 								borderRadius: 90,
-								borderWidth: 1.2,
 							    borderColor: '#ddd',
 							    borderBottomWidth: 0,
 							    shadowColor: '#000',
@@ -156,7 +158,6 @@ export default class OwnersHomePage extends Component{
 								width: 65,
 								position:'relative',
 								borderRadius: 90,
-								borderWidth: 1.2,
 							    borderColor: '#ddd',
 							    borderBottomWidth: 0,
 							    shadowColor: '#000',
@@ -194,7 +195,6 @@ export default class OwnersHomePage extends Component{
 								width: 65,
 								position:'relative',
 								borderRadius: 90,
-								borderWidth: 1.2,
 							    borderColor: '#ddd',
 							    borderBottomWidth: 0,
 							    shadowColor: '#000',
@@ -231,7 +231,6 @@ export default class OwnersHomePage extends Component{
 								width: 65,
 								position:'relative',
 								borderRadius: 90,
-								borderWidth: 1.2,
 							    borderColor: '#ddd',
 							    borderBottomWidth: 0,
 							    shadowColor: '#000',

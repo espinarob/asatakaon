@@ -36,7 +36,8 @@ export default class AddFoodEstablishment extends Component{
 		inputPassword        : '',
 		inputUsername        : '',
 		inputConfirmPassword : '',
-		termsFlag            : false
+		termsFlag            : false,
+		submitted            : false
 	}
 
 	checkBoxForTerms = ()=>{
@@ -48,8 +49,8 @@ export default class AddFoodEstablishment extends Component{
 	}
 
 	submitFoodEstablishment = ()=>{
-		
-		if(this.checkUsernameCharacters() == false){
+		if(this.state.submitted == true)return;
+		else if(this.checkUsernameCharacters() == false){
 			this.props.doSendAReportMessage('Input username should contain letters or digits only');
 			setTimeout(()=>{
 				this.props.doSendAReportMessage('');
@@ -108,7 +109,11 @@ export default class AddFoodEstablishment extends Component{
 				username       : this.state.inputUsername,
 				password       : this.state.inputPassword
 			}
+			this.setState({submitted:true});
 			this.props.doRegisterRestaurant(restaurantData);
+			setTimeout(()=>{
+				this.setState({submitted:false});
+			},Constants.REPORT_DISPLAY_TIME);
 		}	
 	}
 
@@ -200,9 +205,10 @@ export default class AddFoodEstablishment extends Component{
 		    				textAlignVertical:'center',
 		    				textAlign: 'center',
 		    				borderRadius:20,
-		    				fontSize: 16,
+		    				fontSize: 14,
 		    				fontWeight: 'bold',
-		    				top: '12%'
+		    				top: '12%',
+		    				color: '#000'
 		    		}}>	
 		    			Restaurant Owner Registration
 		    		</Text>
@@ -237,7 +243,8 @@ export default class AddFoodEstablishment extends Component{
 		    						position: 'relative',
 		    						textAlign: 'center',
 		    						fontSize: 16,
-		    						fontWeight: 'bold'
+		    						fontWeight: 'bold',
+		    						color: '#000'
 		    				}}>
 		    					Restaurant Name
 		    				</Text>
@@ -257,7 +264,8 @@ export default class AddFoodEstablishment extends Component{
 		    							width: '100%',
 		    							position: 'relative',
 		    							fontSize: 15,
-		    							textAlign:'center'
+		    							textAlign:'center',
+		    							color: '#000'
 		    						}}
 		    						onChangeText={(inputRestaurantName)=>this.setState({inputRestaurantName})}/>
 		    				</View>
@@ -268,7 +276,8 @@ export default class AddFoodEstablishment extends Component{
 		    						position: 'relative',
 		    						textAlign: 'center',
 		    						fontSize: 16,
-		    						fontWeight: 'bold'
+		    						fontWeight: 'bold',
+		    						color: '#000'
 		    				}}>
 		    					Opening Hour
 		    				</Text>
@@ -288,7 +297,8 @@ export default class AddFoodEstablishment extends Component{
 		    							width: '100%',
 		    							position: 'relative',
 		    							fontSize: 15,
-		    							textAlign:'center'
+		    							textAlign:'center',
+		    							color: '#000'
 		    						}}
 		    						onChangeText={(inputStartingHour)=>this.setState({inputStartingHour})}/>
 		    				</View>
@@ -299,7 +309,8 @@ export default class AddFoodEstablishment extends Component{
 		    						position: 'relative',
 		    						textAlign: 'center',
 		    						fontSize: 16,
-		    						fontWeight: 'bold'
+		    						fontWeight: 'bold',
+		    						color: '#000'
 		    				}}>
 		    					Closing Hour
 		    				</Text>
@@ -319,7 +330,8 @@ export default class AddFoodEstablishment extends Component{
 		    							width: '100%',
 		    							position: 'relative',
 		    							fontSize: 15,
-		    							textAlign:'center'
+		    							textAlign:'center',
+		    							color: '#000'
 		    						}}
 		    						onChangeText={(inputClosingHour)=>this.setState({inputClosingHour})}/>
 		    				</View>
@@ -331,7 +343,8 @@ export default class AddFoodEstablishment extends Component{
 		    						position: 'relative',
 		    						textAlign: 'center',
 		    						fontSize: 16,
-		    						fontWeight: 'bold'
+		    						fontWeight: 'bold',
+		    						color: '#000'
 		    				}}>
 		    					E-mail Address
 		    				</Text>
@@ -351,7 +364,8 @@ export default class AddFoodEstablishment extends Component{
 		    							width: '100%',
 		    							position: 'relative',
 		    							fontSize: 15,
-		    							textAlign:'center'
+		    							textAlign:'center',
+		    							color: '#000'
 		    						}}
 		    						onChangeText={(inputEmailAddress)=>this.setState({inputEmailAddress})}/>
 		    				</View>
@@ -361,7 +375,8 @@ export default class AddFoodEstablishment extends Component{
 		    						position: 'relative',
 		    						textAlign: 'center',
 		    						fontSize: 14,
-		    						fontWeight: 'bold'
+		    						fontWeight: 'bold',
+		    						color: '#000'
 		    				}}>
 		    					Username {'(minimum of '+
 		    					Constants.CREDENTIALS_POLICY.MIN_USERNAME + ' characters)'}
@@ -382,7 +397,8 @@ export default class AddFoodEstablishment extends Component{
 		    							width: '100%',
 		    							position: 'relative',
 		    							fontSize: 15,
-		    							textAlign:'center'
+		    							textAlign:'center',
+		    							color: '#000'
 		    						}}
 		    						onChangeText={(inputUsername)=>this.setState({inputUsername})}/>
 		    				</View>
@@ -394,7 +410,8 @@ export default class AddFoodEstablishment extends Component{
 		    						position: 'relative',
 		    						textAlign: 'center',
 		    						fontSize: 16,
-		    						fontWeight: 'bold'
+		    						fontWeight: 'bold',
+		    						color: '#000'
 		    				}}>
 		    					Password
 		    				</Text>
@@ -415,7 +432,8 @@ export default class AddFoodEstablishment extends Component{
 		    							width: '100%',
 		    							position: 'relative',
 		    							fontSize: 15,
-		    							textAlign:'center'
+		    							textAlign:'center',
+		    							color: '#000'
 		    						}}
 		    						onChangeText={(inputPassword)=>this.setState({inputPassword})}/>
 		    				</View>
@@ -426,7 +444,8 @@ export default class AddFoodEstablishment extends Component{
 		    						position: 'relative',
 		    						textAlign: 'center',
 		    						fontSize: 16,
-		    						fontWeight: 'bold'
+		    						fontWeight: 'bold',
+		    						color: '#000'
 		    				}}>
 		    					Confirm Password
 		    				</Text>
@@ -447,7 +466,8 @@ export default class AddFoodEstablishment extends Component{
 		    							width: '100%',
 		    							position: 'relative',
 		    							fontSize: 15,
-		    							textAlign:'center'
+		    							textAlign:'center',
+		    							color: '#000'
 		    						}}
 		    						onChangeText={(inputConfirmPassword)=>this.setState({inputConfirmPassword})}/>
 		    				</View>
@@ -474,7 +494,8 @@ export default class AddFoodEstablishment extends Component{
 				    					position: 'relative',
 				    					fontSize: 13,
 				    					fontWeight: 'bold',
-				    					left: '5%'
+				    					left: '5%',
+				    					color: '#000'
 				    			}}>
 				    				Agree to our terms of service
 				    			</Text>
@@ -505,7 +526,8 @@ export default class AddFoodEstablishment extends Component{
 			    						fontSize: 16,
 			    						textAlign: 'center',
 			    						top:10,
-			    						textAlignVertical: 'center'
+			    						textAlignVertical: 'center',
+			    						color: '#000'
 			    				}}>
 			    						Submit
 			    				</Text>
@@ -535,7 +557,7 @@ export default class AddFoodEstablishment extends Component{
 			    				left: '3%'
 			    		}}>
 			    			<Icon
-			    				style={{fontSize:30}}
+			    				style={{fontSize:30,color: '#000'}}
 			    				name = 'ios-arrow-down'
 			    				type = 'Ionicons'/>
 

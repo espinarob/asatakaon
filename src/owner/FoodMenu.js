@@ -190,91 +190,72 @@ export default class OwnersLocation extends Component{
 				            	renderItem={({item}) =>
 				            		<View style = {{
 				            			borderBottomWidth: 2,
-				            			height: 150,
-				            			backgroundColor: '#fff',
+				            			borderColor: '#000',
+				            			height:95,
 				            			width: '100%',
 				            			position: 'relative',
 				            			marginTop : 10,
 				            			marginBottom :10,
-				            			flexDirection: 'row',
 				            			borderColor: '#979899'
-				            		}}>	
-				            			<Text style = {{
-				            					height: '100%',
-				            					width: '40%',
-				            					position:'absolute',
-				            					fontSize: 14,
-				            					textAlign: 'center',
-				            					textAlignVertical : 'center'
+				            		}}>
+		            					<Text style ={{
+			            						height: '19%',
+			            						width: '100%',
+			            						position: 'relative',
+			            						fontSize: 13,
+			            						color: '#000',
+			            						textAlignVertical: 'center'
 			            				}}>
-			            					Loading..
-				            			</Text>
-				            			<Image
-				            				style = {{
-				            					height: '100%',
-				            					width: '40%',
-				            					position:'relative',
-				            					borderWidth:2,
-				            					borderRadius: 5,
-				            					resizeMode: 'contain'
-				            				}}
-				            				source = {{uri: item.dishImg}}/>
-				            			<View style = {{
-				            					height: '100%',
-				            					width: '57%',
-				            					left: '2%',
-				            					position: 'relative'
-				            			}}>
+			            					Name: {item.name}
+			            				</Text>
+			            				<Text style ={{
+			            						height: '19%',
+			            						width: '100%',
+			            						position: 'relative',
+			            						fontSize: 13,
+			            						color: '#000',
+			            						textAlignVertical: 'center'
+			            				}}>
+			            					Good for {item.persons}
+			            				</Text>
+			            				<Text style ={{
+			            						height: '18%',
+			            						width: '100%',
+			            						position: 'relative',
+			            						fontSize: 13,
+			            						color: '#000',
+			            						textAlignVertical: 'center'
+			            				}}>
+			            					Price in pesos: {item.price} 
+			            				</Text>
+			            				<Text style = {{
+			            						height: '19%',
+			            						width:'100%',
+			            						position: 'relative',
+			            						fontSize: 12,
+			            						color: '#000',
+			            						fontWeight: 'bold'
+			            				}}>
+			            					{(item.description.length == 0 ?
+			            						'No description added': item.description)}
+			            				</Text>
+			            				<TouchableWithoutFeedback
+			            					onPress = {()=>this.deleteADish(item)}>
 				            				<Text style ={{
-				            						height: '11%',
-				            						width: '100%',
+				            						height: '21%',
+				            						width: '15%',
 				            						position: 'relative',
-				            						fontSize: 14,
-				            						color: '#000',
-				            						textAlignVertical: 'center'
+				            						textAlignVertical: 'center',
+				            						textAlign: 'center',
+				            						left: '80%'
 				            				}}>
-				            					Name: {item.name}
+				            					<Icon
+				            						style ={{fontSize:18}}
+				            						name = 'trash'
+				            						type = 'FontAwesome'/>
 				            				</Text>
-				            				<Text style ={{
-				            						height: '11%',
-				            						width: '100%',
-				            						position: 'relative',
-				            						fontSize: 14,
-				            						color: '#000',
-				            						textAlignVertical: 'center'
-				            				}}>
-				            					Good for {item.persons}
-				            				</Text>
-				            				<Text style = {{
-				            						height: '22%',
-				            						width:'100%',
-				            						position: 'relative',
-				            						fontSize: 14,
-				            						color: '#000',
-				            						fontWeight: 'bold'
-				            				}}>
-				            					{(item.description.length == 0 ?
-				            						'No description added': item.description)}
-				            				</Text>
-				            				<TouchableWithoutFeedback
-				            					onPress = {()=>this.deleteADish(item)}>
-					            				<Text style ={{
-					            						height: '20%',
-					            						width: '20%',
-					            						position: 'relative',
-					            						left: '75%',
-					            						textAlignVertical: 'center',
-					            						textAlign: 'center',
-					            						top: '27%'
-					            				}}>
-					            					<Icon
-					            						style ={{fontSize:22}}
-					            						name = 'trash'
-					            						type = 'FontAwesome'/>
-					            				</Text>
-					            			</TouchableWithoutFeedback>
-				            			</View>
-				            		</View>
+				            			</TouchableWithoutFeedback>
+			            			</View>
 				            	}
 				            	keyExtractor={item => item.key}/>
 	    				</View>

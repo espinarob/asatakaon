@@ -64,7 +64,6 @@ export default class Booked extends Component{
 	    			</View>
 
 	    			<View style={{
-		    				borderWidth: 1.2,
 						    borderColor: '#ddd',
 						    borderBottomWidth: 0,
 						    shadowColor: '#000',
@@ -79,7 +78,6 @@ export default class Booked extends Component{
 		    				height: '65%',
 		    				width:'90%',
 		    				position: 'relative',
-		    				elevation: 11,
 							top: '5%',
 						    alignItems: 'center',
 						    paddingTop: '5%',

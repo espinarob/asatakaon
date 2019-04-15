@@ -45,6 +45,8 @@ export default class HomeDashboard extends Component{
 		switch(this.state.loggedInformation.role){
 			case Constants.ROLES.USER_ONLY:
 				return 	<UserHomePage
+							doSetLoggedInformation = {this.props.doSetLoggedInformation}
+							doUseFirebaseObject    = {this.props.doUseFirebaseObject}
 							doChangeUserPassword   = {this.props.doChangeUserPassword}
 							doSignOutAccount       = {this.props.doSignOutAccount}
 							doGetUsersLocation     = {this.props.doGetUsersLocation}
@@ -57,6 +59,7 @@ export default class HomeDashboard extends Component{
 							doSignOutAccount       = {this.props.doSignOutAccount}
 							doGetUsersLocation     = {this.props.doGetUsersLocation}
 							doSendAReportMessage   = {this.props.doSendAReportMessage}
+							doSetLoggedInformation = {this.props.doSetLoggedInformation}
 							doGetLoggedInformation = {this.props.doGetLoggedInformation}
 							doSetRestaurantAddress = {this.props.doSetRestaurantAddress}
 							doAddANewDish          = {this.props.doAddANewDish}

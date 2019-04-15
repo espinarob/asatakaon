@@ -11,7 +11,6 @@ import {Platform,
 	TouchableWithoutFeedback} 
 	from 'react-native';
 import {Container, Icon} from 'native-base';
-import SVGImage          from 'react-native-svg-image';
 import * as firebase     from 'firebase';
 import SyncStorage       from 'sync-storage';
 
@@ -58,7 +57,6 @@ export default class WelcomePage extends Component{
 		    			<TouchableWithoutFeedback
 		    				onPress={()=>this.props.doChangeMainAppDisplay(Constants.APP_PAGES.FIND_RESTAURANT_APP)}>
 			    			<Text style={{
-				    				borderWidth: 1.2,
 								    borderRadius: 2,
 								    borderColor: '#ddd',
 								    borderBottomWidth: 0,
@@ -73,7 +71,6 @@ export default class WelcomePage extends Component{
 								    backgroundColor: '#fff',
 			    					height: '20%',
 			    					width: '50%',
-			    					borderWidth: 2,
 			    					position: 'relative',
 			    					top: '42%',
 			    					fontSize: 15,
@@ -91,7 +88,6 @@ export default class WelcomePage extends Component{
 			    		<TouchableWithoutFeedback
 			    			onPress={()=>console.log('manual')}>
 			    			<Text style={{
-			    					borderWidth: 1.2,
 								    borderRadius: 2,
 								    borderColor: '#ddd',
 								    borderBottomWidth: 0,
@@ -112,7 +108,6 @@ export default class WelcomePage extends Component{
 			    					textAlign:'center',
 			    					textAlignVertical : 'center',
 			    					borderRadius: 100,
-			    					borderWidth: 2,
 			    					color: '#000',
 			    					fontWeight: '900'
 			    			}}>	
