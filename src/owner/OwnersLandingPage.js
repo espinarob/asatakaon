@@ -39,7 +39,8 @@ export default class OwnersLandingPage extends Component{
 		requestsReceived           : [],
 		loadingRequestsData        : true,
 		showRequestsReceived       : false,
-		allowToggleBooking         : true
+		allowToggleBooking         : true,
+		alarmRequestNotification   : false
 	};
 
 	
@@ -80,6 +81,7 @@ export default class OwnersLandingPage extends Component{
 	}
 
 	getRequestsReceived = ()=>{
+		this.setState({alarmRequestNotification:false});
 		if(this.props.doGetLoggedInformation.requests){
 			const requestsReceivedWithKey = JSON.parse(JSON.stringify(this.props.doGetLoggedInformation.requests));
 			const initRequestsReceived    = [];
@@ -88,11 +90,15 @@ export default class OwnersLandingPage extends Component{
 				.forEach((reqReceiveKey)=>{
 					if(requestsReceivedWithKey[reqReceiveKey].status == Constants.BOOKING_STATUS.PENDING
 						|| requestsReceivedWithKey[reqReceiveKey].status == Constants.BOOKING_STATUS.BOOKED){
-						this.setState({
+						this.setState({ // check if there are current requests or bookings to allow toggle in accepting bookings 
 							allowToggleBooking  :false,
 							loadingRequestsData :false});
 					}
-					initRequestsReceived.push(requestsReceivedWithKey[reqReceiveKey]);
+
+					if(requestsReceivedWithKey[reqReceiveKey].status == Constants.BOOKING_STATUS.PENDING){
+						initRequestsReceived.push(requestsReceivedWithKey[reqReceiveKey]);
+						this.setState({alarmRequestNotification:true});
+					}
 				});
 			this.setState({requestsReceived:initRequestsReceived});
 		}
@@ -160,6 +166,21 @@ export default class OwnersLandingPage extends Component{
 	}
 
 	rejectRequest = (request)=>{
+		const today          = 	new Date();
+		const hour           = 	today.getHours() > 12 ? Number(today.getHours()-12): today.getHours();
+		const AMorPM         = 	today.getHours() > 11 ? 'PM': 'AM';
+		const StringDate     = 	String(hour)
+									+':'
+									+String(today.getMinutes())	
+									+' '
+									+String(AMorPM)
+									+' '
+									+String(today.getMonth()+1)
+									+'/'
+									+String(today.getDate())
+									+'/'
+									+String(today.getFullYear());
+
 		this.props.doSendAReportMessage('Submitting, please wait..');
 		this.props.doUseFirebaseObject
 			.database()
@@ -170,22 +191,105 @@ export default class OwnersLandingPage extends Component{
 				'status' : Constants.BOOKING_STATUS.DENIED
 			})
 			.then(()=>{
-				this.props.doUseFirebaseObject
-					.database()
-					.ref("RESTAURANT/"
-						+String(this.props.doGetLoggedInformation.key)
-						+"/requests/"
-						+String(request.requestkey))
+				const notificationKey = 	this.props.doUseFirebaseObject
+												.database()
+												.ref("USERS/"+String(request.userKey)+"/notifications/")
+												.push();
+				notificationKey
 					.update({
-						'status' : Constants.BOOKING_STATUS.DENIED
+						'message' : 'Your booking request to '
+										+String(this.props.doGetLoggedInformation.restaurantName)
+										+' had been declined',
+						'date'    : StringDate,
+						'status'  : Constants.NOTIFICATION_STATUS.UNREAD,
+						'key'     : String(notificationKey.key)
 					})
 					.then(()=>{
-						this.props.doSendAReportMessage('Rejected');
-						setTimeout(()=>{
-							this.props.doSendAReportMessage('');
-							this.setState({showRequestsReceived:false});
-						},1500);
+						this.props.doUseFirebaseObject
+							.database()
+							.ref("RESTAURANT/"
+								+String(this.props.doGetLoggedInformation.key)
+								+"/requests/"
+								+String(request.requestkey))
+							.update({
+								'status' : Constants.BOOKING_STATUS.DENIED
+							})
+							.then(()=>{
+								this.props.doSendAReportMessage('Rejected');
+								setTimeout(()=>{
+									this.props.doSendAReportMessage('');
+									this.setState({showRequestsReceived:false});
+								},1500);
+							});
 					});
+				
+			})
+			.catch((error)=>{
+				this.props.doSendAReportMessage('Error in connecting to the server');
+				setTimeout(()=>{
+					this.props.doSendAReportMessage('');
+				},Constants.REPORT_DISPLAY_TIME);
+			});
+	}
+
+	acceptRequest = (request)=>{
+		const today          = 	new Date();
+		const hour           = 	today.getHours() > 12 ? Number(today.getHours()-12): today.getHours();
+		const AMorPM         = 	today.getHours() > 11 ? 'PM': 'AM';
+		const StringDate     = 	String(hour)
+									+':'
+									+String(today.getMinutes())	
+									+' '
+									+String(AMorPM)
+									+' '
+									+String(today.getMonth()+1)
+									+'/'
+									+String(today.getDate())
+									+'/'
+									+String(today.getFullYear());
+
+		this.props.doSendAReportMessage('Submitting, please wait..');
+		this.props.doUseFirebaseObject
+			.database()
+			.ref("USERS/"+String(request.userKey)
+				+"/requests/"
+				+String(request.requestkey))
+			.update({
+				'status' : Constants.BOOKING_STATUS.BOOKED
+			})
+			.then(()=>{
+				const notificationKey = 	this.props.doUseFirebaseObject
+												.database()
+												.ref("USERS/"+String(request.userKey)+"/notifications/")
+												.push();
+				notificationKey
+					.update({
+						'message' : 'Your booking request to '
+										+String(this.props.doGetLoggedInformation.restaurantName)
+										+' had been accepted',
+						'date'    : StringDate,
+						'status'  : Constants.NOTIFICATION_STATUS.UNREAD,
+						'key'     : String(notificationKey.key)
+					})
+					.then(()=>{
+						this.props.doUseFirebaseObject
+							.database()
+							.ref("RESTAURANT/"
+								+String(this.props.doGetLoggedInformation.key)
+								+"/requests/"
+								+String(request.requestkey))
+							.update({
+								'status' : Constants.BOOKING_STATUS.BOOKED
+							})
+							.then(()=>{
+								this.props.doSendAReportMessage('Booked');
+								setTimeout(()=>{
+									this.props.doSendAReportMessage('');
+									this.setState({showRequestsReceived:false});
+								},1500);
+							});
+					});
+				
 			})
 			.catch((error)=>{
 				this.props.doSendAReportMessage('Error in connecting to the server');
@@ -355,18 +459,21 @@ export default class OwnersLandingPage extends Component{
 												}}>
 													{item.time}
 												</Text>
-												<Text style ={{
-														height: '100%',
-														width: '20%',
-														position : 'relative',
-														fontSize: 11,
-														color : '#000',
-														paddingLeft: '5%',
-														textAlignVertical: 'center',
-														fontWeight: 'bold'
-												}}>
-													Accept
-												</Text>
+												<TouchableWithoutFeedback
+													onPress = {()=>this.acceptRequest(item)}>
+													<Text style ={{
+															height: '100%',
+															width: '20%',
+															position : 'relative',
+															fontSize: 11,
+															color : '#000',
+															paddingLeft: '5%',
+															textAlignVertical: 'center',
+															fontWeight: 'bold'
+													}}>
+														Accept
+													</Text>
+												</TouchableWithoutFeedback>
 												<TouchableWithoutFeedback
 													onPress = {()=>this.rejectRequest(item)}>
 													<Text style ={{
@@ -437,10 +544,15 @@ export default class OwnersLandingPage extends Component{
 		    						color: '#000',
 		    						textAlignVertical: 'center',
 		    						textAlign: 'center',
-		    						color: '#000'
+		    						color: (this.state.alarmRequestNotification == true) ? 
+		    							'#f70014':'#000'
 		    				}}>
 		    					<Icon
-		    						style = {{fontSize:20}}
+		    						style = {{
+		    							fontSize : 20,
+		    							color    : (this.state.alarmRequestNotification == true) ? 
+		    							'#f70014':'#000'}}
+		    							
 		    						name = 'bell'
 		    						type = 'Entypo'/>{'\n'}
 		    					Requests

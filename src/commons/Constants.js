@@ -4,6 +4,10 @@ const Constants = {
 		USER_ONLY            : 'USER_ONLY',
 		DEFAULT_INFO         : 'DEFAULT_INFO'
 	},
+	NOTIFICATION_STATUS      : {
+		MARK_READ            : 'MARK_READ',
+		UNREAD               : 'UNREAD'
+	},
  	BOOKING_STATUS           : {
  		PENDING              : 'PENDING',
  		BOOKED               : 'BOOKED',

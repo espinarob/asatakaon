@@ -67,6 +67,61 @@ export default class RequestsPage extends Component{
 		else this.setState({requestsMade:[]});
 	}
 
+	deleteRequestSent = (request)=>{
+		if(request.status == Constants.BOOKING_STATUS.PENDING){
+			this.props.doSendAReportMessage('Cancelling request, please wait..');
+			this.props.doUseFirebaseObject
+				.database()
+				.ref("RESTAURANT/"
+					+String(request.restaurantKey)
+					+"/requests/"
+					+String(request.requestkey))
+				.remove()
+				.then(()=>{
+					this.props.doUseFirebaseObject
+						.database()
+						.ref("USERS/"
+							+String(this.props.doGetLoggedInformation.accountID)
+							+"/requests/"
+							+String(request.requestkey))
+						.remove()
+						.then(()=>{
+							this.props.doSendAReportMessage('Cancelled');
+							setTimeout(()=>{
+								this.props.doSendAReportMessage('');
+							},Constants.REPORT_DISPLAY_TIME);
+						});
+				})
+				.catch((error)=>{
+					this.props.doSendAReportMessage('Error connecting to the server');
+					setTimeout(()=>{
+						this.props.doSendAReportMessage('');
+					},Constants.REPORT_DISPLAY_TIME);
+				});
+		}
+		else if(request.status == Constants.BOOKING_STATUS.BOOKED){
+			this.props.doSendAReportMessage('Sorry, refer to our no cancellation policy');
+			setTimeout(()=>{
+				this.props.doSendAReportMessage('');
+			},Constants.REPORT_DISPLAY_TIME);
+		}
+		else{
+			this.props.doUseFirebaseObject
+				.database()
+				.ref("USERS/"
+					+String(this.props.doGetLoggedInformation.accountID)
+					+"/requests/"
+					+String(request.requestkey))
+				.remove()
+				.then(()=>{
+					this.props.doSendAReportMessage('Deleted');
+					setTimeout(()=>{
+						this.props.doSendAReportMessage('');
+					},Constants.REPORT_DISPLAY_TIME);
+				});
+		}
+	}
+
 	render() {
 	    return (
 	    	<React.Fragment>
@@ -235,29 +290,32 @@ export default class RequestsPage extends Component{
 														'Booked' : 'Claimed'
 													}
 												</Text>
-												<Text style ={{
-														height: '100%',
-														width:'25%',
-														position: 'relative',
-														fontSize: 14,
-														borderRadius: 100,
-														color: '#000',
-														textAlignVertical:'center',
-														textAlign:'center',
-														borderColor: '#ddd',
-													    borderBottomWidth: 0,
-													    shadowColor: '#000',
-													    shadowOffset: {
-															width: 0,
-															height: 5,
-														},
-														shadowOpacity: 0.34,
-														shadowRadius: 2.27,
-														elevation: 10,
-													    backgroundColor: '#fff'
-												}}>
-													Delete
-												</Text>
+												<TouchableWithoutFeedback
+													onPress ={()=>this.deleteRequestSent(item)}>
+													<Text style ={{
+															height: '100%',
+															width:'25%',
+															position: 'relative',
+															fontSize: 14,
+															borderRadius: 100,
+															color: '#000',
+															textAlignVertical:'center',
+															textAlign:'center',
+															borderColor: '#ddd',
+														    borderBottomWidth: 0,
+														    shadowColor: '#000',
+														    shadowOffset: {
+																width: 0,
+																height: 5,
+															},
+															shadowOpacity: 0.34,
+															shadowRadius: 2.27,
+															elevation: 10,
+														    backgroundColor: '#fff'
+													}}>
+														Delete
+													</Text>
+												</TouchableWithoutFeedback>
 											</View>
 										</View>
 									}

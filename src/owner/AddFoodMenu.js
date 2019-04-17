@@ -402,6 +402,9 @@ export default class OwnersLocation extends Component{
 			        					<Picker.Item 
 						        			label={'Beverages'} 
 			        						value={'Beverages'}/>
+		        						<Picker.Item 
+						        			label={'Snacks'} 
+			        						value={'Snacks'}/>
 			        				</Picker>
 			    				</View>
 			    			</View>

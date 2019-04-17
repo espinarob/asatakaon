@@ -98,6 +98,9 @@ export default class OwnersHomePage extends Component{
 							doSetHomePage          = {this.setHomePage} />;
 			case Constants.OWNER_ROLE_PAGES.BOOKED_USERS:
 				return 	<Booked
+							doSendAReportMessage   = {this.props.doSendAReportMessage}
+							doUseFirebaseObject    = {this.props.doUseFirebaseObject}
+							doGetLoggedInformation = {this.props.doGetLoggedInformation}
 							doSetHomePage          = {this.setHomePage} />;
 		}
 	}

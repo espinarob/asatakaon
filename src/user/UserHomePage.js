@@ -51,6 +51,7 @@ export default class UserHomePage extends Component{
 		switch(this.state.userRoleOperation){
 			case Constants.USER_ROLE_PAGES.REQUESTS:
 				return 	<RequestsPage
+							doSendAReportMessage   = {this.props.doSendAReportMessage}
 							doSetLoggedInformation = {this.props.doSetLoggedInformation}
 							doUseFirebaseObject    = {this.props.doUseFirebaseObject}
 							doGetLoggedInformation = {this.props.doGetLoggedInformation}/>;
@@ -60,6 +61,7 @@ export default class UserHomePage extends Component{
 							doUseFirebaseObject    = {this.props.doUseFirebaseObject}
 							doSetHomePage          = {this.setHomePage}
 							doSendAReportMessage   = {this.props.doSendAReportMessage}
+							doGetLoggedInformation = {this.props.doGetLoggedInformation}
 							doGetUsersLocation     = {this.props.doGetUsersLocation} />;
 			case Constants.USER_ROLE_PAGES.BOOKINGS:
 				return 	<BookingsPage 

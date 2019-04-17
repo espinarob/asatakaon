@@ -10,6 +10,7 @@ import {Platform,
 	NetInfo,
 	TouchableWithoutFeedback,
 	TextInput,
+	FlatList,
 	Picker,
 	CheckBox} 
 	from 'react-native';
@@ -33,16 +34,22 @@ const restaurantIcon     = require('../img/icon/restaurant-own.png');
 export default class UserHomePage extends Component{
 
 	state  = {
-		registeredRestaurants     : [],
-		pressedRestaurantDetails  : {},
-		tracksViewChangesUserIcon : true,
-		tracksViewChangesResIcon  : true,
-		restaurantObjectListener  : ''
+		registeredRestaurants      : [],
+		pressedRestaurantDetails   : {},
+		tracksViewChangesUserIcon  : true,
+		tracksViewChangesResIcon   : true,
+		restaurantObjectListener   : '',
+		allNotifications           : [],
+		showNotifications          : false,
+		alarmNotification          : false,
+		notificationObjectListener : '',
+		alarmNotificationCounter   : 0
 	}
 
 
 	componentDidMount(){
 		this.getAllRegisteredRestaurants();
+		this.listenToNoficiations();
 	}
 
 	componentWillUnmount(){
@@ -50,6 +57,70 @@ export default class UserHomePage extends Component{
 			.database()
 			.ref("RESTAURANT/")
 			.off("value",this.state.restaurantObjectListener);
+		this.props.doUseFirebaseObject
+			.database()
+			.ref("USERS/"+String(this.props.doGetLoggedInformation.accountID)+"/notifications")
+			.off("value",this.state.notificationObjectListener);
+	}
+
+	markReadNotifications = ()=>{
+		this.props.doUseFirebaseObject
+			.database()
+			.ref("USERS/"+String(this.props.doGetLoggedInformation.accountID)+"/notifications")
+			.once("value",snapshot=>{
+				if(snapshot.exists()){
+					const allNotificationsWithKey = JSON.parse(JSON.stringify(snapshot.val()));
+					const keys                    = Object.keys(allNotificationsWithKey);
+					for(index=0;index<keys.length;index++){
+						this.props.doUseFirebaseObject
+							.database()
+							.ref("USERS/"
+								+String(this.props.doGetLoggedInformation.accountID)
+								+"/notifications/"
+								+String(keys[index]))
+							.update({
+								'status' : Constants.NOTIFICATION_STATUS.MARK_READ
+							})
+							.catch((error)=>{
+								console.log('An error has occured ',error);
+							});	
+					}
+				}
+			});
+
+	}
+
+	listenToNoficiations = ()=>{
+		const notificationObjectListener = 	this.props.doUseFirebaseObject
+												.database()
+												.ref("USERS/"+String(this.props.doGetLoggedInformation.accountID)+"/notifications")
+												.on("value",snapshot=>{
+													if(snapshot.exists()){
+														const allNotificationsWithKey = JSON.parse(JSON.stringify(snapshot.val()));
+														const initAllNotifications    = [];
+														this.setState({
+															alarmNotificationCounter:0,
+															alarmNotification:false});
+														Object
+															.keys(allNotificationsWithKey)
+															.forEach((notifKey)=>{
+																initAllNotifications.push(allNotificationsWithKey[notifKey]);
+																if(allNotificationsWithKey[notifKey].status 
+																	== Constants.NOTIFICATION_STATUS.UNREAD){
+																	this.setState({alarmNotification:true});
+																	this.setState({alarmNotificationCounter:this.state.alarmNotificationCounter+1});
+																}
+															});
+														this.setState({allNotifications:initAllNotifications});
+													}
+													else{
+														this.setState({
+															allNotifications:[],
+															alarmNotificationCounter:0,
+															alarmNotification:false});
+													}
+												});
+		this.setState({notificationObjectListener:notificationObjectListener})
 	}
 
 	getAllRegisteredRestaurants = ()=>{
@@ -89,6 +160,11 @@ export default class UserHomePage extends Component{
 		}
 	}
 
+	handleClickNotificationIcon = ()=>{
+		this.setState({showNotifications:true});
+		this.markReadNotifications();
+	}
+
 	displaySearchBar = ()=>{
 		return 	<View style={{
 						height:'9%',
@@ -110,22 +186,31 @@ export default class UserHomePage extends Component{
 					    borderRadius:15,
 					    flexDirection: 'row'
 				}}>
-					<Text style={{
-							height:'100%',
-							position: 'relative',
-							width: '17%',
-							fontSize: 15,
-							textAlign: 'center',
-							textAlignVertical: 'center'
-					}}>
-						<Icon
-							style = {{
-								fontSize:25,
-								color: '#000'
-							}}
-							name  = 'ios-notifications'
-							type  = 'Ionicons'/>
-					</Text>
+					<TouchableWithoutFeedback
+						onPress = {()=>this.handleClickNotificationIcon()}>
+						<Text style={{
+								height:'100%',
+								position: 'relative',
+								width: '17%',
+								fontSize: 13,
+								fontWeight: 'bold',
+								textAlign: 'center',
+								textAlignVertical: 'center'
+						}}>
+							<Icon
+								style = {{
+									fontSize:25,
+									color: (this.state.alarmNotification == true) ?
+										'#f70014':'#000'
+								}}
+								name  = 'ios-notifications'
+								type  = 'Ionicons'/>
+							{' '+(
+								this.state.alarmNotification == true ?
+								this.state.alarmNotificationCounter :''
+								)}
+						</Text>
+					</TouchableWithoutFeedback>
 					<Text style={{
 							height:'100%',
 							position: 'relative',
@@ -484,6 +569,165 @@ export default class UserHomePage extends Component{
 		}
 	}
 
+	deleteNotification = (notif)=>{
+		this.props.doUseFirebaseObject
+			.database()
+			.ref("USERS/"
+				+String(this.props.doGetLoggedInformation.accountID)
+				+"/notifications/"
+				+String(notif.key))
+			.remove()
+			.then(()=>{
+				this.props.doSendAReportMessage('Deleted');
+				setTimeout(()=>{
+					this.props.doSendAReportMessage('');
+				},Constants.REPORT_DISPLAY_TIME);
+			})
+			.catch((error)=>{
+				this.props.doSendAReportMessage('Error connecting to the server');
+				setTimeout(()=>{
+					this.props.doSendAReportMessage('');
+				},Constants.REPORT_DISPLAY_TIME);
+				console.log('An error has occured',error);
+			});
+	}
+
+	displayNotification = ()=>{
+		if(this.state.showNotifications){
+			return 	<View style ={{
+						position: 'absolute',
+						height: 310,
+						width: '75%',
+						borderRadius: 15,
+						borderColor: '#ddd',
+					    borderBottomWidth: 0,
+					    shadowColor: '#000',
+					    shadowOffset: {
+							width: 0,
+							height: 5,
+						},
+						shadowOpacity: 0.34,
+						shadowRadius: 3.27,
+						elevation: 10,
+					    backgroundColor: '#fff',
+					    top: '25%',
+					    left: '12.5%'
+					}}>
+						<TouchableWithoutFeedback
+							onPress = {()=>this.setState({showNotifications:false})}>
+							<Text style ={{
+			    					height: '10.5%',
+			    					width: '10%',
+			    					position:'absolute',
+			    					top: '2%',
+			    					left: '2%',
+			    					textAlign:'center',
+			    					textAlignVertical: 'center'
+			    			}}>
+			    				<Icon
+			    					style ={{fontSize:16.5}}
+			    					name = 'closesquare'
+			    					type = 'AntDesign'/>
+			    			</Text>
+			    		</TouchableWithoutFeedback>
+			    		<Text style ={{
+			    				height: '9%',
+			    				position: 'absolute',
+			    				width: '40%',
+			    				left: '30%',
+			    				textAlign: 'center',
+			    				textAlignVertical: 'center',
+			    				fontSize: 14,
+			    				fontWeight: 'bold',
+			    				color: '#000',
+			    				top: '2%'
+			    		}}>
+			    			Notifications
+			    		</Text>
+			    		{
+			    			this.state.allNotifications.length == 0 ?
+			    			<Text style ={{
+									height: '15%',
+									top: '42.5%',
+									fontSize: 13,
+									color: '#000',
+									fontWeight: 'bold',
+									textAlign: 'center',
+									textAlignVertical: 'center'
+							}}>
+								No notifications received
+							</Text>:
+							<View style ={{
+									height: '88%',
+									top: '10%',
+									position: 'relative',
+									width: '100%'
+							}}>
+								<FlatList
+				    				data = {this.state.allNotifications}
+									renderItem = {({item}) =>
+										<View style = {{
+												marginTop: 10,
+												marginBottom: 10,
+												position: 'relative',
+												width: '90%',
+												height: 64,
+												borderBottomWidth: 2,
+												left: '5%'
+										}}>
+											<Text style ={{
+													height: '50%',
+													width: '100%',
+													position:'relative',
+													fontSize: 10.5,
+													color: '#000',
+													textAlignVertical: 'center'
+											}}>
+												{item.message}
+											</Text>
+											<View style ={{
+													height: '39%',
+													top: '2.2%',
+													width: '100%',
+													flexDirection: 'row',
+													justifyContent: 'space-between'
+											}}>
+												<Text style ={{
+														height: '100%',
+														width: '45%',
+														position:'relative',
+														fontSize: 9.5,
+														color: '#000',
+														textAlignVertical: 'center'
+												}}>
+													{item.date}
+												</Text>
+												<TouchableWithoutFeedback
+													onPress = {()=>this.deleteNotification(item)}>
+													<Text style ={{
+															height: '100%',
+															width: '20%',
+															position:'relative',
+															fontSize: 10,
+															color: '#000',
+															textAlign: 'center',
+															textAlignVertical: 'center'
+													}}>
+														Delete
+													</Text>
+												</TouchableWithoutFeedback>
+											</View>
+										</View>
+									}
+									keyExtractor={item=>item.key}/>
+							</View>
+			    		}
+					</View>;
+		}
+		else return;
+		
+	}
+
 	render() {
 	    return (
 	    	<React.Fragment>
@@ -497,6 +741,7 @@ export default class UserHomePage extends Component{
 	    			{this.showDetailsOfRestaurant()}
 	    		</View>
 	    		{this.displaySearchBar()}
+	    		{this.displayNotification()}
 	    	</React.Fragment>
 		);
   	}
