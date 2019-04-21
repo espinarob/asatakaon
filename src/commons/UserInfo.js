@@ -215,6 +215,58 @@ export default class UserInfo extends Component{
 		    					Account Details
 		    				</Text>
 		    			</TouchableWithoutFeedback>
+
+	    			</View>
+	    			<View style={{
+	    					height:'10%',
+	    					width:'100%',
+	    					flexDirection: 'row',
+	    					justifyContent:'center',
+	    					top: '25%'
+	    			}}>
+	    				<Text style={{
+	    						height:'100%',
+	    						width:'10%',
+	    						position:'relative',
+	    						fontSize: 15,
+	    						fontWeight:'bold',
+	    						textAlign:'center',
+	    						textAlignVertical:'center'
+	    				}}>
+	    					<Icon
+	    						style={{
+	    							fontSize:34
+	    						}}
+	    						name = 'message'
+	    						type = 'Entypo'/>
+	    				</Text>
+	    				<TouchableWithoutFeedback
+	    					onPress={()=>this.props.doSetHomePage(Constants.COMMON_ROLE_PAGES.SEND_A_REPORT)}>
+		    				<Text style={{
+		    						height:'100%',
+		    						width:'50%',
+		    						fontSize:16,
+		    						color:'#000',
+		    						borderRadius:100,
+		    						backgroundColor:'#fff',
+		    						fontWeight:'bold',
+		    						textAlignVertical:'center',
+		    						textAlign:'center',
+								    borderColor: '#ddd',
+								    borderBottomWidth: 0,
+								    shadowColor: '#000',
+								    shadowOffset: {
+										width: 0,
+										height: 2,
+									},
+									shadowOpacity: 0.34,
+									shadowRadius: 2.27,
+									elevation: 9
+		    				}}>
+		    					Send A Report
+		    				</Text>
+		    			</TouchableWithoutFeedback>
+		    				
 	    			</View>
 	    		</View>
 	    	</React.Fragment>

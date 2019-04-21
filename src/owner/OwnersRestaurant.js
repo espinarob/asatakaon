@@ -516,6 +516,40 @@ export default class OwnersRestaurant extends Component{
 		    						alignItems: 'center'
 		    				}}>
 		    					<TouchableWithoutFeedback
+		    						onPress = {()=>this.props.doSetHomePage(Constants.OWNER_ROLE_PAGES.EDIT_PRICE_RANGE)}>
+			    					<Text style={{
+			    							height: '90%',
+					    					width:'50%',
+					    					position:'relative',
+					    					borderColor: '#ddd',
+										    borderBottomWidth: 0,
+										    shadowColor: '#000',
+										    shadowOffset: {
+												width: 0,
+												height: 2,
+											},
+											shadowOpacity: 0.34,
+											elevation: 6,
+										    backgroundColor: '#fff',
+										    textAlignVertical: 'center',
+										    textAlign: 'center',
+										    fontWeight :'bold',
+										    borderRadius : 15,
+										    color: '#000'
+			    					}}>
+			    						Your Price Range
+			    					</Text>
+			    				</TouchableWithoutFeedback>
+		    				</View>
+		    				<View style = {{
+		    						height: 50,
+		    						width: '90%',
+		    						position: 'relative',
+		    						top:15,
+		    						paddingBottom: 5,
+		    						alignItems: 'center'
+		    				}}>
+		    					<TouchableWithoutFeedback
 		    						onPress={()=>this.editRestaurantAddress()} >
 			    					<Text style={{
 			    							height: '90%',
@@ -546,7 +580,7 @@ export default class OwnersRestaurant extends Component{
 		    						height: 50,
 		    						width: '90%',
 		    						position: 'relative',
-		    						top: 15,
+		    						top: 20,
 		    						alignItems: 'center'
 		    				}}>
 		    					<TouchableWithoutFeedback
@@ -580,7 +614,7 @@ export default class OwnersRestaurant extends Component{
 		    						height: 50,
 		    						width: '90%',
 		    						position: 'relative',
-		    						top: 20,
+		    						top: 25,
 		    						alignItems: 'center'
 		    				}}>
 		    					<TouchableWithoutFeedback

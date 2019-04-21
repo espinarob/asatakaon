@@ -24,13 +24,14 @@ import Constants         from '../commons/Constants.js';
 import ChangePassword    from '../commons/ChangePassword.js';
 import AccountDetails    from '../commons/AccountDetails.js';
 import UserInfo          from '../commons/UserInfo.js';
+import SendAReport       from '../commons/SendAReport.js';
 import OwnersLandingPage from './OwnersLandingPage.js';
 import OwnersRestaurant  from './OwnersRestaurant.js';
 import OwnersLocation    from './OwnersLocation.js';
 import AddFoodMenu       from './AddFoodMenu.js';
 import FoodMenu          from './FoodMenu.js';
 import Booked            from './Booked.js';
-
+import PriceRange        from './PriceRange.js';
 
 export default class OwnersHomePage extends Component{
 
@@ -102,6 +103,18 @@ export default class OwnersHomePage extends Component{
 							doUseFirebaseObject    = {this.props.doUseFirebaseObject}
 							doGetLoggedInformation = {this.props.doGetLoggedInformation}
 							doSetHomePage          = {this.setHomePage} />;
+			case Constants.COMMON_ROLE_PAGES.SEND_A_REPORT:
+				return 	<SendAReport
+							doSendAReportMessage   = {this.props.doSendAReportMessage}
+							doUseFirebaseObject    = {this.props.doUseFirebaseObject}
+							doGetLoggedInformation = {this.props.doGetLoggedInformation}
+							doSetHomePage          = {this.setHomePage}/>;
+			case Constants.OWNER_ROLE_PAGES.EDIT_PRICE_RANGE:
+				return 	<PriceRange
+							doSendAReportMessage   = {this.props.doSendAReportMessage}
+							doUseFirebaseObject    = {this.props.doUseFirebaseObject}
+							doGetLoggedInformation = {this.props.doGetLoggedInformation}
+							doSetHomePage          = {this.setHomePage}/>;
 		}
 	}
 

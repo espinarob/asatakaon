@@ -25,6 +25,7 @@ import Constants             from '../commons/Constants.js';
 import UserInfo              from '../commons/UserInfo.js';
 import ChangePassword        from '../commons/ChangePassword.js';
 import AccountDetails        from '../commons/AccountDetails.js';
+import SendAReport           from '../commons/SendAReport.js';
 import BookingsPage          from './BookingsPage.js';
 import LandingPage           from './LandingPage.js';
 import RestaurantDetailsPage from './RestaurantDetailsPage.js';
@@ -57,6 +58,7 @@ export default class UserHomePage extends Component{
 							doGetLoggedInformation = {this.props.doGetLoggedInformation}/>;
 			case Constants.USER_ROLE_PAGES.LANDING_PAGE:
 				return 	<LandingPage
+							doSetLoggedInformation = {this.props.doSetLoggedInformation}
 							doSetRestaurantDetails = {this.setPressedRestaurantDetails}
 							doUseFirebaseObject    = {this.props.doUseFirebaseObject}
 							doSetHomePage          = {this.setHomePage}
@@ -65,6 +67,7 @@ export default class UserHomePage extends Component{
 							doGetUsersLocation     = {this.props.doGetUsersLocation} />;
 			case Constants.USER_ROLE_PAGES.BOOKINGS:
 				return 	<BookingsPage 
+							doSendAReportMessage   = {this.props.doSendAReportMessage}
 							doUseFirebaseObject    = {this.props.doUseFirebaseObject}
 							doGetLoggedInformation = {this.props.doGetLoggedInformation}/>;
 			case Constants.COMMON_ROLE_PAGES.USER_INFO:
@@ -91,6 +94,12 @@ export default class UserHomePage extends Component{
 							doGetLoggedInformation = {this.props.doGetLoggedInformation}
 							doSendAReportMessage   = {this.props.doSendAReportMessage}
 							doGetRestaurantDetails = {this.state.pressedRestaurantDetails}
+							doSetHomePage          = {this.setHomePage}/>;
+			case Constants.COMMON_ROLE_PAGES.SEND_A_REPORT:
+				return 	<SendAReport
+							doSendAReportMessage   = {this.props.doSendAReportMessage}
+							doUseFirebaseObject    = {this.props.doUseFirebaseObject}
+							doGetLoggedInformation = {this.props.doGetLoggedInformation}
 							doSetHomePage          = {this.setHomePage}/>;
 		}
 	}

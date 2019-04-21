@@ -167,11 +167,13 @@ export default class OwnersLandingPage extends Component{
 
 	rejectRequest = (request)=>{
 		const today          = 	new Date();
-		const hour           = 	today.getHours() > 12 ? Number(today.getHours()-12): today.getHours();
+		const hour           = 	today.getHours() > 12 ? Number(today.getHours()-12): 
+									(today.getHours() == 0 ? '12' : today.getHours()) ;
 		const AMorPM         = 	today.getHours() > 11 ? 'PM': 'AM';
 		const StringDate     = 	String(hour)
 									+':'
-									+String(today.getMinutes())	
+									+ ( Number(today.getMinutes())>9 ? 
+										String(today.getMinutes()) : '0'+String(today.getMinutes()) )
 									+' '
 									+String(AMorPM)
 									+' '
@@ -188,7 +190,8 @@ export default class OwnersLandingPage extends Component{
 				+"/requests/"
 				+String(request.requestkey))
 			.update({
-				'status' : Constants.BOOKING_STATUS.DENIED
+				'status'          : Constants.BOOKING_STATUS.DENIED,
+				'dateRejected'    : StringDate
 			})
 			.then(()=>{
 				const notificationKey = 	this.props.doUseFirebaseObject
@@ -212,7 +215,8 @@ export default class OwnersLandingPage extends Component{
 								+"/requests/"
 								+String(request.requestkey))
 							.update({
-								'status' : Constants.BOOKING_STATUS.DENIED
+								'status'         : Constants.BOOKING_STATUS.DENIED,
+								'dateRejected'   : StringDate
 							})
 							.then(()=>{
 								this.props.doSendAReportMessage('Rejected');
@@ -234,11 +238,13 @@ export default class OwnersLandingPage extends Component{
 
 	acceptRequest = (request)=>{
 		const today          = 	new Date();
-		const hour           = 	today.getHours() > 12 ? Number(today.getHours()-12): today.getHours();
+		const hour           = 	today.getHours() > 12 ? Number(today.getHours()-12): 
+									(today.getHours() == 0 ? '12' : today.getHours()) ;
 		const AMorPM         = 	today.getHours() > 11 ? 'PM': 'AM';
 		const StringDate     = 	String(hour)
 									+':'
-									+String(today.getMinutes())	
+									+ ( Number(today.getMinutes())>9 ? 
+										String(today.getMinutes()) : '0'+String(today.getMinutes()) )
 									+' '
 									+String(AMorPM)
 									+' '
@@ -255,7 +261,8 @@ export default class OwnersLandingPage extends Component{
 				+"/requests/"
 				+String(request.requestkey))
 			.update({
-				'status' : Constants.BOOKING_STATUS.BOOKED
+				'status'         : Constants.BOOKING_STATUS.BOOKED,
+				'dateAccepted'   : StringDate
 			})
 			.then(()=>{
 				const notificationKey = 	this.props.doUseFirebaseObject
@@ -279,7 +286,8 @@ export default class OwnersLandingPage extends Component{
 								+"/requests/"
 								+String(request.requestkey))
 							.update({
-								'status' : Constants.BOOKING_STATUS.BOOKED
+								'status'         : Constants.BOOKING_STATUS.BOOKED,
+								'dateAccepted'   : StringDate
 							})
 							.then(()=>{
 								this.props.doSendAReportMessage('Booked');
@@ -300,7 +308,20 @@ export default class OwnersLandingPage extends Component{
 	}
 
 	displayRestaurantLocation = ()=>{
-		if(!this.props.doGetLoggedInformation.location){
+		if(this.props.doGetLoggedInformation.placeStatus!=Constants.RESTAURANT_PLACE_STATUS.ACCEPTED){
+			return 	<Text style ={{
+							height: '24%',
+							width: '83%',
+							textAlignVertical:'center',
+							textAlign: 'center',
+							fontSize: 13,
+							color: '#000',
+							top: '37%'
+					}}>
+						{'You are blocked, please wait for the admin to validate and accept your account'}
+					</Text>
+		}
+		else if(!this.props.doGetLoggedInformation.location){
 			return 	<Text style ={{
 							height: '20%',
 							width: '80%',
@@ -515,15 +536,66 @@ export default class OwnersLandingPage extends Component{
     				}}>
     					{this.displayRestaurantLocation()}
     				</View>
-    				<TouchableWithoutFeedback
-    					onPress = {()=>this.setState({showRequestsReceived:true})}>
-		    			<View style = {{
-		    					height: 65,
-		    					width: 65,
+    				{
+    					this.props.doGetLoggedInformation.placeStatus == Constants.RESTAURANT_PLACE_STATUS.BLOCKED ?
+    					<React.Fragment>
+    					</React.Fragment>:
+	    				<TouchableWithoutFeedback
+	    					onPress = {()=>this.setState({showRequestsReceived:true})}>
+			    			<View style = {{
+			    					height: 65,
+			    					width: 65,
+			    					position: 'absolute',
+			    					top: 25,
+			    					left: '73%',
+			    					borderRadius: 90,
+								    borderColor: '#ddd',
+								    borderBottomWidth: 0,
+								    shadowColor: '#000',
+								    shadowOffset: {
+										width: 0,
+										height: 5,
+									},
+									shadowOpacity: 0.34,
+									shadowRadius: 3.27,
+									elevation: 10,
+								    backgroundColor: '#fff'
+			    			}}>
+			    				<Text style ={{
+			    						height: '100%',
+			    						width: '100%',
+			    						position: 'relative',
+			    						fontSize: 12,
+			    						color: '#000',
+			    						textAlignVertical: 'center',
+			    						textAlign: 'center',
+			    						color: (this.state.alarmRequestNotification == true) ? 
+			    							'#f70014':'#000'
+			    				}}>
+			    					<Icon
+			    						style = {{
+			    							fontSize : 20,
+			    							color    : (this.state.alarmRequestNotification == true) ? 
+			    							'#f70014':'#000'}}
+			    							
+			    						name = 'bell'
+			    						type = 'Entypo'/>{'\n'}
+			    					Requests
+			    				</Text>
+			    			</View>
+		    			</TouchableWithoutFeedback>
+		    		}
+
+		    		{
+						this.props.doGetLoggedInformation.placeStatus == Constants.RESTAURANT_PLACE_STATUS.BLOCKED ?
+						<React.Fragment>
+						</React.Fragment>:
+		    			<View style= {{
+		    					height: 50,
+		    					width: 200,
 		    					position: 'absolute',
-		    					top: 25,
-		    					left: '73%',
-		    					borderRadius: 90,
+		    					borderRadius: 100,
+		    					flexDirection: 'row',
 							    borderColor: '#ddd',
 							    borderBottomWidth: 0,
 							    shadowColor: '#000',
@@ -534,89 +606,47 @@ export default class OwnersLandingPage extends Component{
 								shadowOpacity: 0.34,
 								shadowRadius: 3.27,
 								elevation: 10,
-							    backgroundColor: '#fff'
-		    			}}>
-		    				<Text style ={{
-		    						height: '100%',
-		    						width: '100%',
-		    						position: 'relative',
-		    						fontSize: 12,
-		    						color: '#000',
-		    						textAlignVertical: 'center',
-		    						textAlign: 'center',
-		    						color: (this.state.alarmRequestNotification == true) ? 
-		    							'#f70014':'#000'
-		    				}}>
-		    					<Icon
-		    						style = {{
-		    							fontSize : 20,
-		    							color    : (this.state.alarmRequestNotification == true) ? 
-		    							'#f70014':'#000'}}
-		    							
-		    						name = 'bell'
-		    						type = 'Entypo'/>{'\n'}
-		    					Requests
-		    				</Text>
-		    			</View>
-	    			</TouchableWithoutFeedback>
-
-	    			<View style= {{
-	    					height: 50,
-	    					width: 200,
-	    					position: 'absolute',
-	    					borderRadius: 100,
-	    					flexDirection: 'row',
-						    borderColor: '#ddd',
-						    borderBottomWidth: 0,
-						    shadowColor: '#000',
-						    shadowOffset: {
-								width: 0,
-								height: 5,
-							},
-							shadowOpacity: 0.34,
-							shadowRadius: 3.27,
-							elevation: 10,
-							top: 30,
-							left: '15%',
-						 	backgroundColor: '#fff'
-    				}}>
-    					{
-    						this.state.loading  == true ?
-    						<Text style = {{
-	    							height: '100%',
-	    							width: '80%',
-	    							textAlignVertical: 'center',
-	    							position: 'relative',
-	    							left: 20,
-	    							color: '#000',
-	    							fontSize: 14
-	    					}}>
-	    						Loading, please wait..
-	    					</Text> : 
-	    					<React.Fragment>
-								<Switch
-		    						value = {this.state.inputAcceptBookingFlag}
-		    						onChange = {this.handleChangeInAcceptBooking}
-		    						style = {{
-		    							position: 'relative',
-		    							left: 20,
-		    							width: '17%',
-		    							backgroundColor: '#fff'
-		    						}}/>
-		    					<Text style = {{
+								top: 30,
+								left: '15%',
+							 	backgroundColor: '#fff'
+	    				}}>
+	    					{
+	    						this.state.loading  == true ?
+	    						<Text style = {{
 		    							height: '100%',
-		    							width: '60%',
+		    							width: '80%',
 		    							textAlignVertical: 'center',
 		    							position: 'relative',
 		    							left: 20,
 		    							color: '#000',
-		    							fontSize: 13
+		    							fontSize: 14
 		    					}}>
-		    						Accepting bookings
-		    					</Text>
-	    					</React.Fragment>}
-    				</View>
-
+		    						Loading, please wait..
+		    					</Text> : 
+		    					<React.Fragment>
+									<Switch
+			    						value = {this.state.inputAcceptBookingFlag}
+			    						onChange = {this.handleChangeInAcceptBooking}
+			    						style = {{
+			    							position: 'relative',
+			    							left: 20,
+			    							width: '17%',
+			    							backgroundColor: '#fff'
+			    						}}/>
+			    					<Text style = {{
+			    							height: '100%',
+			    							width: '60%',
+			    							textAlignVertical: 'center',
+			    							position: 'relative',
+			    							left: 20,
+			    							color: '#000',
+			    							fontSize: 13
+			    					}}>
+			    						Accepting bookings
+			    					</Text>
+		    					</React.Fragment>}
+	    				</View>
+	    			}
     				{this.displayAllReceivedRequests()}
 	    		</View> 
 	    	</React.Fragment>

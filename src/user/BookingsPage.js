@@ -71,7 +71,8 @@ export default class BookingsPage extends Component{
 		let initAllAcceptedRequests = 	[];
 		initAllAcceptedRequests     = 	requests.map((request)=>{
 												if(request.status == Constants.BOOKING_STATUS.BOOKED 
-													|| request.status == Constants.BOOKING_STATUS.CLAIMED){
+													|| request.status == Constants.BOOKING_STATUS.CLAIMED
+													|| request.status == Constants.BOOKING_STATUS.NOT_CLAIMED){
 													return request;
 												}
 											});
@@ -86,6 +87,29 @@ export default class BookingsPage extends Component{
 				loadingData:false});
 		}
 		
+	}
+
+	deleteRequest = (request)=>{
+		this.props.doSendAReportMessage('Deleting, please wait..');
+		this.props.doUseFirebaseObject
+			.database()
+			.ref("USERS/"
+					+String(this.props.doGetLoggedInformation.accountID)
+					+"/requests/"
+					+String(request.requestkey))
+			.remove()
+			.then(()=>{
+				this.props.doSendAReportMessage('Deleted');
+				setTimeout(()=>{
+					this.props.doSendAReportMessage('');
+				},Constants.REPORT_DISPLAY_TIME);
+			})
+			.catch((error)=>{
+				this.props.doSendAReportMessage('Error in connecting to the server');
+				setTimeout(()=>{
+					this.props.doSendAReportMessage('');
+				},Constants.REPORT_DISPLAY_TIME);
+			});
 	}
 
 	render() {
@@ -218,13 +242,49 @@ export default class BookingsPage extends Component{
 											</Text>
 											<View style ={{
 													height: '26%',
-													width: '100%',
+													width: '90%',
 													position: 'relative',
 													top: '4.2%',
-													justifyContent: 'space-evenly',
+													left: '5%',
+													justifyContent: 'space-between',
 													flexDirection: 'row'
 											}}>
-
+												<Text style ={{
+														height: '100%',
+														width: '50%',
+														color: '#000',
+														fontSize: 11,
+														paddingLeft: '2%',
+														textAlignVertical: 'center'
+												}}>
+													{'Date accepted: '+item.dateAccepted}
+												</Text>
+												<TouchableWithoutFeedback
+													onPress = {()=>this.deleteRequest(item)}>
+													<Text style ={{
+															height: '100%',
+															width:'25%',
+															position: 'relative',
+															fontSize: 14,
+															borderRadius: 100,
+															color: '#000',
+															textAlignVertical:'center',
+															textAlign:'center',
+															borderColor: '#ddd',
+														    borderBottomWidth: 0,
+														    shadowColor: '#000',
+														    shadowOffset: {
+																width: 0,
+																height: 5,
+															},
+															shadowOpacity: 0.34,
+															shadowRadius: 2.27,
+															elevation: 10,
+														    backgroundColor: '#fff'
+													}}>
+														Delete
+													</Text>
+												</TouchableWithoutFeedback>
 											</View>
 
 									</View>

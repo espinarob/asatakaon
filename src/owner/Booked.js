@@ -56,7 +56,9 @@ export default class Booked extends Component{
 															if(currentRequestsReceived[reqKey].status 
 																== Constants.BOOKING_STATUS.BOOKED ||
 																currentRequestsReceived[reqKey].status 
-																== Constants.BOOKING_STATUS.CLAIMED){
+																== Constants.BOOKING_STATUS.CLAIMED ||
+																currentRequestsReceived[reqKey].status 
+																== Constants.BOOKING_STATUS.NOT_CLAIMED ){
 																initAllAcceptedRequests.push(currentRequestsReceived[reqKey])
 															}
 														});
@@ -84,7 +86,8 @@ export default class Booked extends Component{
 	}
 
 	deleteAcceptedRequest = (request)=>{
-		if(request.status == Constants.BOOKING_STATUS.CLAIMED){
+		if( request.status == Constants.BOOKING_STATUS.CLAIMED ||
+			request.status == Constants.BOOKING_STATUS.NOT_CLAIMED ){
 			this.props.doUseFirebaseObject
 				.database()
 				.ref("RESTAURANT/"
@@ -106,7 +109,7 @@ export default class Booked extends Component{
 				});
 		}
 		else{
-			this.props.doSendAReportMessage('Invalid, user must claim the booking first');
+			this.props.doSendAReportMessage('Invalid, you must declared it claimed or unclaimed');
 			setTimeout(()=>{
 				this.props.doSendAReportMessage('');
 			},Constants.REPORT_DISPLAY_TIME);
@@ -115,11 +118,13 @@ export default class Booked extends Component{
 
 	setAsClaimed = (accepted)=>{
 		const today          = 	new Date();
-		const hour           = 	today.getHours() > 12 ? Number(today.getHours()-12): today.getHours();
+		const hour           = 	today.getHours() > 12 ? Number(today.getHours()-12): 
+									(today.getHours() == 0 ? '12' : today.getHours()) ;
 		const AMorPM         = 	today.getHours() > 11 ? 'PM': 'AM';
 		const StringDate     = 	String(hour)
 									+':'
-									+String(today.getMinutes())	
+									+ ( Number(today.getMinutes())>9 ? 
+										String(today.getMinutes()) : '0'+String(today.getMinutes()) )
 									+' '
 									+String(AMorPM)
 									+' '
@@ -129,7 +134,7 @@ export default class Booked extends Component{
 									+'/'
 									+String(today.getFullYear());
 
-
+		this.props.doSendAReportMessage('Setting data, please wait..');
 		if(accepted.status == Constants.BOOKING_STATUS.BOOKED){
 			this.props.doUseFirebaseObject
 				.database()
@@ -180,8 +185,98 @@ export default class Booked extends Component{
 					},Constants.REPORT_DISPLAY_TIME);
 				});
 		}
-		else{
-			this.props.doSendAReportMessage('Already claimed');
+		else if(accepted.status == Constants.BOOKING_STATUS.CLAIMED){
+			this.props.doSendAReportMessage('Already set as claimed');
+			setTimeout(()=>{
+				this.props.doSendAReportMessage('');
+			},Constants.REPORT_DISPLAY_TIME);
+		}	
+		else if(accepted.status == Constants.BOOKING_STATUS.NOT_CLAIMED){
+			this.props.doSendAReportMessage('Already set as unclaimed');
+			setTimeout(()=>{
+				this.props.doSendAReportMessage('');
+			},Constants.REPORT_DISPLAY_TIME);
+		}	
+	}
+
+
+	setAsUnclaimed = (accepted)=>{
+		const today          = 	new Date();
+		const hour           = 	today.getHours() > 12 ? Number(today.getHours()-12): 
+									(today.getHours() == 0 ? '12' : today.getHours()) ;
+		const AMorPM         = 	today.getHours() > 11 ? 'PM': 'AM';
+		const StringDate     = 	String(hour)
+									+':'
+									+ ( Number(today.getMinutes())>9 ? 
+										String(today.getMinutes()) : '0'+String(today.getMinutes()) )
+									+' '
+									+String(AMorPM)
+									+' '
+									+String(today.getMonth()+1)
+									+'/'
+									+String(today.getDate())
+									+'/'
+									+String(today.getFullYear());
+
+		this.props.doSendAReportMessage('Setting data, please wait..');							
+		if(accepted.status == Constants.BOOKING_STATUS.BOOKED){
+			this.props.doUseFirebaseObject
+				.database()
+				.ref("USERS/"
+					+String(accepted.userKey)
+					+"/requests/"
+					+String(accepted.requestkey))
+				.update({
+					'status' : Constants.BOOKING_STATUS.NOT_CLAIMED
+				})
+				.then(()=>{
+					this.props.doUseFirebaseObject
+						.database()
+						.ref("RESTAURANT/"
+							+String(this.props.doGetLoggedInformation.key)
+							+"/requests/"
+							+String(accepted.requestkey))
+						.update({
+							'status' : Constants.BOOKING_STATUS.NOT_CLAIMED
+						})
+						.then(()=>{
+							const notificationKey = 	this.props.doUseFirebaseObject
+															.database()
+															.ref("USERS/"
+																+String(accepted.userKey)
+																+"/notifications/")
+															.push();
+							notificationKey
+								.update({
+									'message' : String(this.props.doGetLoggedInformation.restaurantName)
+										+ " says you did not claim you're booking",
+									'date'    : StringDate,
+									'status'  : Constants.NOTIFICATION_STATUS.UNREAD,
+									'key'     : String(notificationKey.key)
+								})
+								.then(()=>{
+									this.props.doSendAReportMessage('Set as unclaimed by user');
+									setTimeout(()=>{
+										this.props.doSendAReportMessage('');
+									},Constants.REPORT_DISPLAY_TIME);
+								});
+						});
+				})
+				.catch((error)=>{
+					this.props.doSendAReportMessage('Error connecting to the server');
+					setTimeout(()=>{
+						this.props.doSendAReportMessage('');
+					},Constants.REPORT_DISPLAY_TIME);
+				});
+		}
+		else if(accepted.status == Constants.BOOKING_STATUS.CLAIMED){
+			this.props.doSendAReportMessage('Already set as claimed');
+			setTimeout(()=>{
+				this.props.doSendAReportMessage('');
+			},Constants.REPORT_DISPLAY_TIME);
+		}	
+		else if(accepted.status == Constants.BOOKING_STATUS.NOT_CLAIMED){
+			this.props.doSendAReportMessage('Already set as unclaimed');
 			setTimeout(()=>{
 				this.props.doSendAReportMessage('');
 			},Constants.REPORT_DISPLAY_TIME);
@@ -260,7 +355,7 @@ export default class Booked extends Component{
 								</Text>
 
 								<View style ={{
-										height: '21%',
+										height: '23%',
 										width: '100%',
 										justifyContent :'space-between',
 										flexDirection: 'row',
@@ -269,9 +364,9 @@ export default class Booked extends Component{
 								}}>
 									<Text style ={{
 											height: '100%',
-											width: '50%',
+											width: '38%',
 											position : 'relative',
-											fontSize: 11,
+											fontSize: 10.5,
 											color : '#000',
 											paddingLeft: '2%',
 											textAlignVertical: 'center'
@@ -279,10 +374,28 @@ export default class Booked extends Component{
 										{item.time}
 									</Text>
 									<TouchableWithoutFeedback
+										onPress = {()=>this.setAsUnclaimed(item)}>
+										<Text style ={{
+												height: '100%',
+												width: '19%',
+												position : 'relative',
+												fontSize: 10,
+												color : '#000',
+												textAlign: 'center',
+												textAlignVertical: 'center',
+												fontWeight: 'bold'
+										}}>
+											{
+												item.status  == Constants.BOOKING_STATUS.NOT_CLAIMED ? 
+												'Unclaimed' :  'Absent'
+											}
+										</Text>
+									</TouchableWithoutFeedback>
+									<TouchableWithoutFeedback
 										onPress = {()=>this.setAsClaimed(item)}>
 										<Text style ={{
 												height: '100%',
-												width: '30%',
+												width: '19%',
 												position : 'relative',
 												fontSize: 10,
 												color : '#000',
@@ -292,7 +405,7 @@ export default class Booked extends Component{
 										}}>
 											{
 												item.status  == Constants.BOOKING_STATUS.CLAIMED ? 
-												'Claimed' : 'Set as claimed' 
+												'Claimed' :  'Arrived'
 											}
 										</Text>
 									</TouchableWithoutFeedback>

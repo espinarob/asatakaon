@@ -12,7 +12,8 @@ const Constants = {
  		PENDING              : 'PENDING',
  		BOOKED               : 'BOOKED',
  		DENIED               : 'DENIED',
- 		CLAIMED              : 'CLAIMED'
+ 		CLAIMED              : 'CLAIMED',
+ 		NOT_CLAIMED          : 'NOT_CLAIMED'
  	},
 	USER_ROLE_PAGES          : {
 		LANDING_PAGE         : 'LANDING_PAGE',
@@ -27,7 +28,8 @@ const Constants = {
 		BOOKED_USERS         : 'BOOKED_USERS',
 		RESTAURANT_LOCATION  : 'RESTAURANT_LOCATION',
 		ADD_FOOD_MENU        : 'ADD_FOOD_MENU',
-		VIEW_FOOD_MENU       : 'VIEW_FOOD_MENU'
+		VIEW_FOOD_MENU       : 'VIEW_FOOD_MENU',
+		EDIT_PRICE_RANGE     : 'EDIT_PRICE_RANGE'
 	},
 
 	RESTAURANT_PLACE_STATUS  : {
@@ -35,10 +37,16 @@ const Constants = {
 		ACCEPTED             : 'ACCEPTED'
 	},
 
+	ACCOUNT_USER_STATUS      : {
+		BLOCKED              : 'BLOCKED',
+		ACCEPTED             : 'ACCEPTED'
+	},
+
 	COMMON_ROLE_PAGES        : {
 		USER_INFO            : 'USER_INFO',
 		CHANGE_PASSWORD      : 'CHANGE_PASSWORD',
-		ACCOUNT_DETAILS      : 'ACCOUNT_DETAILS'
+		ACCOUNT_DETAILS      : 'ACCOUNT_DETAILS',
+		SEND_A_REPORT        : 'SEND_A_REPORT'
 	},
 
 	LOCAL_ACCOUNT_KEY        : 'LOCAL_ACCOUNT_KEY',
@@ -71,7 +79,9 @@ const Constants = {
 		MAX_PASSWORD         : 20,
 		MAX_RESTAURANT_NAME  : 30,
 		MAX_FOOD_MENU        : 25,
-		MAX_DISH_DESCRIPTION : 20
+		MAX_DISH_DESCRIPTION : 20,
+		MAX_REPORT_SUBJECT   : 30,
+		MAX_REPORT_CONTENT   : 55
 	},
 	REPORT_DISPLAY_TIME     : 3000,
 	FIRE_BASE_CONFIG : {

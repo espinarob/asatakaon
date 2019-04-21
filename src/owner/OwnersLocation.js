@@ -5,7 +5,6 @@ import {Platform,
 	StyleSheet, 
 	Text, 
 	View, 
-	AsyncStorage,
 	Image,
 	NetInfo,
 	TouchableWithoutFeedback,
@@ -14,16 +13,8 @@ import {Platform,
 	CheckBox,
 	ScrollView} 
 	from 'react-native';
-import {
-	Container, 
-	Icon,
-	Spinner} 
-	from 'native-base';
-import SyncStorage   from 'sync-storage';
-import MapView       from 'react-native-maps';
-import {Marker}      from 'react-native-maps';
-import Geolocation   from 'react-native-geolocation-service';
 
+	
 /* -- Custom Components  -- */
 import Constants from '../commons/Constants.js';
 
@@ -167,7 +158,8 @@ export default class OwnersLocation extends Component{
 	    						position: 'relative',
 	    						textAlign: 'center',
 	    						textAlignVertical: 'center',
-	    						fontSize: 14
+	    						fontSize: 14,
+	    						color: '#000'
 	    				}}>
 	    					{'A warning to all restaurant owners: updating your establishment location can '
 	  		  					+'only be done once. We suggest to click the button below and update such information whenever you are '
@@ -188,7 +180,8 @@ export default class OwnersLocation extends Component{
 		    						textAlignVertical: 'center',
 		    						fontSize: 13,
 		    						fontWeight: 'bold',
-		    						fontStyle: 'italic'
+		    						fontStyle: 'italic',
+		    						color: '#000'
 		    				}}>
 		    					{'Current Location: '}
 		    				</Text>
@@ -198,7 +191,8 @@ export default class OwnersLocation extends Component{
 		    					height : '100%',
 		    					textAlign: 'center',
 	    						textAlignVertical: 'center',
-	    						fontSize: 14
+	    						fontSize: 14,
+	    						color: '#000'
 		    				}}>
 		    					{(this.state.addressName.length == 0 ?
 		    						'Getting your address, please wait..' : this.state.addressName)}
@@ -225,7 +219,8 @@ export default class OwnersLocation extends Component{
 								    textAlign: 'center',
 								    fontWeight :'bold',
 								    borderRadius : 15,
-								    top: '6%'
+								    top: '6%',
+								    color: '#000'
 	    					}}>
 	    						Set as your location
 		    				</Text>

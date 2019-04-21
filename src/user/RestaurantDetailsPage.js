@@ -116,11 +116,13 @@ export default class BookingsPage extends Component{
 		this.props.doSendAReportMessage('Submitting your request, please wait..');
 		const permissionFlag = this.searchForRequestsMade();
 		const today          = new Date();
-		const hour           = 	today.getHours() > 12 ? Number(today.getHours()-12): today.getHours();
+		const hour           = 	today.getHours() > 12 ? Number(today.getHours()-12): 
+									(today.getHours() == 0 ? '12' : today.getHours()) ;
 		const AMorPM         = 	today.getHours() > 11 ? 'PM': 'AM';
 		const StringDate     = 	String(hour)
 									+':'
-									+String(today.getMinutes())	
+									+ ( Number(today.getMinutes())>9 ? 
+										String(today.getMinutes()) : '0'+String(today.getMinutes()) )
 									+' '
 									+String(AMorPM)
 									+' '
@@ -307,7 +309,22 @@ export default class BookingsPage extends Component{
     				{this.props.doGetRestaurantDetails.restaurantName}
     			</Text>
     			<Text style ={{
-    					height: 17,
+    					height: 16,
+    					width: '90%',
+    					textAlignVertical:'center',
+    					fontSize: 11.5,
+    					top: '2%',
+    					color: '#000',
+    					fontWeight: 'bold'
+    			}}>
+    				{'Current price range in pesos: '+(
+    					this.props.doGetRestaurantDetails.priceRange ? 
+    					(this.props.doGetRestaurantDetails.priceRange.minimum
+    						+'-'
+    						+this.props.doGetRestaurantDetails.priceRange.maximum) : 'Not updated by owner')}
+				</Text>
+    			<Text style ={{
+    					height: 16,
     					width: '90%',
     					textAlignVertical:'center',
     					fontSize: 12,
@@ -342,7 +359,7 @@ export default class BookingsPage extends Component{
     				Our menu
     			</Text>
     			<View style ={{
-    					height: '34%',
+    					height: '33%',
     					width: '100%',
     					position: 'relative',
     					top:'2%'

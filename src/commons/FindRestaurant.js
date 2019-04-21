@@ -170,7 +170,7 @@ export default class FindRestaurant extends Component{
 	showDetailsOfRestaurant = ()=>{
 		if(this.state.pressedRestaurantDetails.location){
 			return 	<View style ={{
-		    				height: 285,
+		    				height: 295,
 		    				width: '75%',
 		    				position: 'absolute',
 		    				borderColor: '#ddd',
@@ -241,14 +241,29 @@ export default class FindRestaurant extends Component{
 		    				{'Complete Address: '
 		    					+this.state.pressedRestaurantDetails.location.addressName}
 		    			</Text>
-
 		    			<Text style ={{
-	    					height: '8%',
+	    					height: '7%',
+	    					width: '100%',
+	    					textAlign:'center',
+	    					textAlignVertical: 'center',
+	    					fontSize: 11.5,
+	    					color: '#000',
+	    					top: '6%',
+	    					fontWeight: 'bold'
+		    			}}>
+		    				{'Price range in pesos: '+
+		    					(this.state.pressedRestaurantDetails.priceRange ? 
+		    						(this.state.pressedRestaurantDetails.priceRange.minimum
+		    							+'-'+this.state.pressedRestaurantDetails.priceRange.maximum)
+		    						: 'not yet updated' )}
+		    			</Text>
+		    			<Text style ={{
+	    					height: '7%',
 	    					width: '90%',
 	    					textAlignVertical: 'center',
 	    					fontSize: 12,
 	    					color: '#000',
-	    					top: '6%',
+	    					top: '3%',
 	    					fontStyle : 'italic',
 	    					fontWeight: 'bold'
 		    			}}>
@@ -257,10 +272,10 @@ export default class FindRestaurant extends Component{
 		    			{
 		    				this.state.pressedRestaurantDetails.Menu ? 
 		    				<View style ={{
-		    						height: '40%',
+		    						height: '36%',
 		    						width:'100%',
 		    						position:'relative',
-		    						top: '6%'
+		    						top: '3%'
 		    				}}>
 		    					<FlatList
 									data = {this.state.pressedCreatedMenu}

@@ -85,7 +85,8 @@ export default class Main extends Component{
 										password   : userData.password,
 										gender     : userData.gender,
 										accountID  : String(userKey.key),
-										role       : String(Constants.ROLES.USER_ONLY)
+										role       : String(Constants.ROLES.USER_ONLY),
+										status     : Constants.ACCOUNT_USER_STATUS.ACCEPTED
 									})
 									.then(()=>{
 										this.sendAReportMessage('You have been successfully registered!');

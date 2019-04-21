@@ -43,13 +43,15 @@ export default class UserHomePage extends Component{
 		showNotifications          : false,
 		alarmNotification          : false,
 		notificationObjectListener : '',
-		alarmNotificationCounter   : 0
+		alarmNotificationCounter   : 0,
+		accountFirebaseObject      : ''
 	}
 
 
 	componentDidMount(){
 		this.getAllRegisteredRestaurants();
 		this.listenToNoficiations();
+		this.listenToAccountChanges();
 	}
 
 	componentWillUnmount(){
@@ -61,6 +63,24 @@ export default class UserHomePage extends Component{
 			.database()
 			.ref("USERS/"+String(this.props.doGetLoggedInformation.accountID)+"/notifications")
 			.off("value",this.state.notificationObjectListener);
+		this.props.doUseFirebaseObject
+			.database()
+			.ref("USERS/"+String(this.props.doGetLoggedInformation.accountID))
+			.off("value",this.state.accountFirebaseObject);
+	}
+
+	listenToAccountChanges = ()=>{
+		const accountFirebaseObject = 	this.props.doUseFirebaseObject
+											.database()
+											.ref("USERS/"+String(this.props.doGetLoggedInformation.accountID))
+											.on("value",snapshot=>{
+												if(snapshot.exists()){
+													this.setState({loadingRequestData:true});
+													const updatedAccountInformation = JSON.parse(JSON.stringify(snapshot.val()));
+													this.props.doSetLoggedInformation(updatedAccountInformation);
+												}
+											});
+		this.setState({accountFirebaseObject:accountFirebaseObject});
 	}
 
 	markReadNotifications = ()=>{
@@ -166,91 +186,94 @@ export default class UserHomePage extends Component{
 	}
 
 	displaySearchBar = ()=>{
-		return 	<View style={{
-						height:'9%',
-						width:'80%',
-						left: '10%',
-						top: '8%',
-						position:'absolute',
-					    borderColor: '#ddd',
-					    borderBottomWidth: 0,
-					    shadowColor: '#000',
-					    shadowOffset: {
-							width: 0,
-							height: 5,
-						},
-						shadowOpacity: 0.34,
-						shadowRadius: 6.27,
-						elevation: 10,
-					    backgroundColor: '#fff',
-					    borderRadius:15,
-					    flexDirection: 'row'
-				}}>
-					<TouchableWithoutFeedback
-						onPress = {()=>this.handleClickNotificationIcon()}>
+		if(this.props.doGetLoggedInformation.status == Constants.ACCOUNT_USER_STATUS.ACCEPTED){
+			return 	<View style={{
+							height:'9%',
+							width:'80%',
+							left: '10%',
+							top: '8%',
+							position:'absolute',
+						    borderColor: '#ddd',
+						    borderBottomWidth: 0,
+						    shadowColor: '#000',
+						    shadowOffset: {
+								width: 0,
+								height: 5,
+							},
+							shadowOpacity: 0.34,
+							shadowRadius: 6.27,
+							elevation: 10,
+						    backgroundColor: '#fff',
+						    borderRadius:15,
+						    flexDirection: 'row'
+					}}>
+						<TouchableWithoutFeedback
+							onPress = {()=>this.handleClickNotificationIcon()}>
+							<Text style={{
+									height:'100%',
+									position: 'relative',
+									width: '17%',
+									fontSize: 13,
+									fontWeight: 'bold',
+									textAlign: 'center',
+									textAlignVertical: 'center'
+							}}>
+								<Icon
+									style = {{
+										fontSize:25,
+										color: (this.state.alarmNotification == true) ?
+											'#f70014':'#000'
+									}}
+									name  = 'ios-notifications'
+									type  = 'Ionicons'/>
+								{' '+(
+									this.state.alarmNotification == true ?
+									this.state.alarmNotificationCounter :''
+									)}
+							</Text>
+						</TouchableWithoutFeedback>
 						<Text style={{
 								height:'100%',
 								position: 'relative',
-								width: '17%',
-								fontSize: 13,
-								fontWeight: 'bold',
-								textAlign: 'center',
+								width: '11%',
+								fontSize: 15,
 								textAlignVertical: 'center'
 						}}>
 							<Icon
 								style = {{
 									fontSize:25,
-									color: (this.state.alarmNotification == true) ?
-										'#f70014':'#000'
+									color: '#000'
 								}}
-								name  = 'ios-notifications'
+								name  = 'md-search'
 								type  = 'Ionicons'/>
-							{' '+(
-								this.state.alarmNotification == true ?
-								this.state.alarmNotificationCounter :''
-								)}
 						</Text>
-					</TouchableWithoutFeedback>
-					<Text style={{
-							height:'100%',
-							position: 'relative',
-							width: '11%',
-							fontSize: 15,
-							textAlignVertical: 'center'
-					}}>
-						<Icon
-							style = {{
-								fontSize:25,
-								color: '#000'
-							}}
-							name  = 'md-search'
-							type  = 'Ionicons'/>
-					</Text>
-					<TextInput
-						placeholder = 'Search something..'
-						style ={{
-							fontSize: 15,
-							width: '53%',
-							position:'relative',
-							height: '90%',
-							paddingLeft:'3%',
-							borderBottomWidth: 2
-						}}/>
-					<Text style ={{
-							height: '90%',
-							position: 'relative',
-							top: '2.3%',
-							width: '14%',
-							textAlignVertical:'center',
-							textAlign: 'center',
-							fontSize: 14,
-							fontWeight:'bold',
-							color: '#000',
-							left:6
-					}}>
-						Filter
-					</Text>
-				</View>
+						<TextInput
+							placeholder = 'Search something..'
+							style ={{
+								fontSize: 15,
+								width: '53%',
+								position:'relative',
+								height: '90%',
+								paddingLeft:'3%',
+								borderBottomWidth: 2
+							}}/>
+						<Text style ={{
+								height: '90%',
+								position: 'relative',
+								top: '2.3%',
+								width: '14%',
+								textAlignVertical:'center',
+								textAlign: 'center',
+								fontSize: 14,
+								fontWeight:'bold',
+								color: '#000',
+								left:6
+						}}>
+							Filter
+						</Text>
+					</View>
+		}
+		else return;
 	}
 
 	containPressRestaurantDetails = (restaurant)=>{
@@ -396,7 +419,18 @@ export default class UserHomePage extends Component{
 		    							position:'relative',
 		    							resizeMode: 'contain'
 		    						}}/>:
-		    					<React.Fragment></React.Fragment>
+		    					<Text style ={{
+		    							height: '100%',
+		    							width:'47%',
+		    							position:'relative',
+		    							textAlignVertical:'center',
+		    							textAlign:'center',
+		    							color: '#000',
+		    							fontSize: 11,
+		    							fontStyle: 'italic'
+		    					}}>
+
+		    					</Text>
 		    				}
 		    				<View style ={{
 		    						height: '100%',
@@ -529,7 +563,21 @@ export default class UserHomePage extends Component{
     }
 
 	showMapToUser = ()=>{
-		if(this.props.doGetUsersLocation.latitude){
+		if(this.props.doGetLoggedInformation.status!=Constants.ACCOUNT_USER_STATUS.ACCEPTED){
+			return 	<Text style={{
+							height: '7%',
+							position:'relative',
+							top: '35%',
+							width:'100%',
+							fontSize: 14,
+							textAlign: 'center',
+							textAlignVertical: 'center',
+							color: '#000'
+					}}>
+						The admin blocked your account, send a report
+					</Text>
+		}
+		else if(this.props.doGetUsersLocation.latitude){
 			return	<MapView style = {{height:'100%',width: '100%'}}
 						provider={MapView.PROVIDER_GOOGLE}
 			            region = {{
@@ -671,7 +719,7 @@ export default class UserHomePage extends Component{
 												marginBottom: 10,
 												position: 'relative',
 												width: '90%',
-												height: 64,
+												height: 70,
 												borderBottomWidth: 2,
 												left: '5%'
 										}}>

@@ -106,6 +106,7 @@ export default class RequestsPage extends Component{
 			},Constants.REPORT_DISPLAY_TIME);
 		}
 		else{
+			this.props.doSendAReportMessage('Deleting, please wait...');
 			this.props.doUseFirebaseObject
 				.database()
 				.ref("USERS/"
@@ -115,6 +116,12 @@ export default class RequestsPage extends Component{
 				.remove()
 				.then(()=>{
 					this.props.doSendAReportMessage('Deleted');
+					setTimeout(()=>{
+						this.props.doSendAReportMessage('');
+					},Constants.REPORT_DISPLAY_TIME);
+				})
+				.catch((error)=>{
+					this.props.doSendAReportMessage('Error connecting to the server');
 					setTimeout(()=>{
 						this.props.doSendAReportMessage('');
 					},Constants.REPORT_DISPLAY_TIME);
@@ -287,7 +294,9 @@ export default class RequestsPage extends Component{
 														item.status == Constants.BOOKING_STATUS.DENIED ? 
 														'Denied' :
 														item.status == Constants.BOOKING_STATUS.BOOKED ?
-														'Booked' : 'Claimed'
+														'Booked' : 
+														item.status == Constants.BOOKING_STATUS.CLAIMED ?
+														'Claimed' : 'Unclaimed'
 													}
 												</Text>
 												<TouchableWithoutFeedback
