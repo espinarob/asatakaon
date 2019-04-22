@@ -90,26 +90,34 @@ export default class BookingsPage extends Component{
 	}
 
 	deleteRequest = (request)=>{
-		this.props.doSendAReportMessage('Deleting, please wait..');
-		this.props.doUseFirebaseObject
-			.database()
-			.ref("USERS/"
-					+String(this.props.doGetLoggedInformation.accountID)
-					+"/requests/"
-					+String(request.requestkey))
-			.remove()
-			.then(()=>{
-				this.props.doSendAReportMessage('Deleted');
-				setTimeout(()=>{
-					this.props.doSendAReportMessage('');
-				},Constants.REPORT_DISPLAY_TIME);
-			})
-			.catch((error)=>{
-				this.props.doSendAReportMessage('Error in connecting to the server');
-				setTimeout(()=>{
-					this.props.doSendAReportMessage('');
-				},Constants.REPORT_DISPLAY_TIME);
-			});
+		if(request.status == Constants.BOOKING_STATUS.BOOKED){
+			this.props.doSendAReportMessage('Sorry, refer to our no cancellation policy');
+			setTimeout(()=>{
+				this.props.doSendAReportMessage('');
+			},Constants.REPORT_DISPLAY_TIME);
+		}
+		else{
+			this.props.doSendAReportMessage('Deleting, please wait..');
+			this.props.doUseFirebaseObject
+				.database()
+				.ref("USERS/"
+						+String(this.props.doGetLoggedInformation.accountID)
+						+"/requests/"
+						+String(request.requestkey))
+				.remove()
+				.then(()=>{
+					this.props.doSendAReportMessage('Deleted');
+					setTimeout(()=>{
+						this.props.doSendAReportMessage('');
+					},Constants.REPORT_DISPLAY_TIME);
+				})
+				.catch((error)=>{
+					this.props.doSendAReportMessage('Error in connecting to the server');
+					setTimeout(()=>{
+						this.props.doSendAReportMessage('');
+					},Constants.REPORT_DISPLAY_TIME);
+				});
+		}
 	}
 
 	render() {
@@ -204,10 +212,10 @@ export default class BookingsPage extends Component{
 									}}>
 
 										<Text style ={{
-													height: '13.4%',
+													height: '12%',
 													width: '100%',
 													textAlignVertical: 'center',
-													fontSize: 13,
+													fontSize: 11.5,
 													color: '#000',
 													paddingLeft: '2%',
 													top: '1%'
@@ -215,7 +223,7 @@ export default class BookingsPage extends Component{
 												{item.restaurantName}
 											</Text>
 											<Text style ={{
-													height: '27%',
+													height: '25%',
 													width: '100%',
 													paddingLeft: '2%',
 													textAlignVertical: 'center',
@@ -226,11 +234,11 @@ export default class BookingsPage extends Component{
 												{item.restaurantAddress}
 											</Text>
 											<Text style ={{
-													height: '13.4%',
+													height: '12%',
 													width: '100%',
 													paddingLeft: '2%',
 													textAlignVertical: 'center',
-													fontSize: 13,
+													fontSize: 12,
 													color: '#000',
 													top: '1%',
 													fontWeight: 'bold'
@@ -240,11 +248,29 @@ export default class BookingsPage extends Component{
 													+'-'
 													+item.closingHour}
 											</Text>
+											<Text style ={{
+													height: '12%',
+													width: '100%',
+													paddingLeft: '2%',
+													textAlignVertical: 'center',
+													fontSize: 11.5,
+													color: '#000',
+													top: '1%',
+													fontWeight: 'bold'
+											}}>
+												{ 'Status: '+
+													( item.status == Constants.BOOKING_STATUS.CLAIMED ?
+														'Claimed' :
+														item.status == Constants.BOOKING_STATUS.BOOKED ?
+														'Booked' : 'Unclaimed')
+												}
+											</Text>
+
 											<View style ={{
 													height: '26%',
 													width: '90%',
 													position: 'relative',
-													top: '4.2%',
+													top: '2.3%',
 													left: '5%',
 													justifyContent: 'space-between',
 													flexDirection: 'row'
