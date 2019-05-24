@@ -18,45 +18,58 @@ import {
 	Icon,
 	Spinner} 
 	from 'native-base';
+import Geolocation   from 'react-native-geolocation-service';
 
 /* -- Custom Components  -- */
-import Constants         from '../commons/Constants.js';
-import ChangePassword    from '../commons/ChangePassword.js';
-import AccountDetails    from '../commons/AccountDetails.js';
-import UserInfo          from '../commons/UserInfo.js';
-import SendAReport       from '../commons/SendAReport.js';
-import OwnersLandingPage from './OwnersLandingPage.js';
-import OwnersRestaurant  from './OwnersRestaurant.js';
-import OwnersLocation    from './OwnersLocation.js';
-import AddFoodMenu       from './AddFoodMenu.js';
-import FoodMenu          from './FoodMenu.js';
-import Booked            from './Booked.js';
-import PriceRange        from './PriceRange.js';
-import FeedbacksList     from './FeedbacksList.js';
+import Constants             from '../commons/Constants.js';
+import UserInfo              from '../commons/UserInfo.js';
+import ChangePassword        from '../commons/ChangePassword.js';
+import AccountDetails        from '../commons/AccountDetails.js';
+import SendAReport           from '../commons/SendAReport.js';
+import BookingsPage          from './BookingsPage.js';
+import LandingPage           from './LandingPage.js';
+import RestaurantDetailsPage from './RestaurantDetailsPage.js';
+import RequestsPage          from './RequestsPage.js';
 
-export default class OwnersHomePage extends Component{
+export default class UserHomePage extends Component{
 
 	state = {
-		ownerRoleOperation : Constants.OWNER_ROLE_PAGES.LANDING_PAGE
+		userRoleOperation : Constants.USER_ROLE_PAGES.LANDING_PAGE,
+		pressedRestaurantDetails : {}
 	}
 
 	setHomePage = (content)=>{
 		this.props.doSendAReportMessage('');
-		this.setState({ownerRoleOperation:content});
+		this.setState({userRoleOperation:content});
 	}
 
-	componentDidMount(){
+	setPressedRestaurantDetails = (restaurant)=>{
+		this.setState({pressedRestaurantDetails:restaurant});
 	}
 
-	OwnerHomePageDisplay = ()=>{
-		switch(this.state.ownerRoleOperation){
-			case Constants.OWNER_ROLE_PAGES.LANDING_PAGE:
-				return 	<OwnersLandingPage
+
+	UserHomePageDisplay =()=>{
+		switch(this.state.userRoleOperation){
+			case Constants.USER_ROLE_PAGES.REQUESTS:
+				return 	<RequestsPage
+							doSendAReportMessage   = {this.props.doSendAReportMessage}
 							doSetLoggedInformation = {this.props.doSetLoggedInformation}
 							doUseFirebaseObject    = {this.props.doUseFirebaseObject}
-							doGetLoggedInformation = {this.props.doGetLoggedInformation}
+							doGetLoggedInformation = {this.props.doGetLoggedInformation}/>;
+			case Constants.USER_ROLE_PAGES.LANDING_PAGE:
+				return 	<LandingPage
+							doSetLoggedInformation = {this.props.doSetLoggedInformation}
+							doSetRestaurantDetails = {this.setPressedRestaurantDetails}
+							doUseFirebaseObject    = {this.props.doUseFirebaseObject}
+							doSetHomePage          = {this.setHomePage}
 							doSendAReportMessage   = {this.props.doSendAReportMessage}
-							doSetHomePage          = {this.setHomePage} />;
+							doGetLoggedInformation = {this.props.doGetLoggedInformation}
+							doGetUsersLocation     = {this.props.doGetUsersLocation} />;
+			case Constants.USER_ROLE_PAGES.BOOKINGS:
+				return 	<BookingsPage 
+							doSendAReportMessage   = {this.props.doSendAReportMessage}
+							doUseFirebaseObject    = {this.props.doUseFirebaseObject}
+							doGetLoggedInformation = {this.props.doGetLoggedInformation}/>;
 			case Constants.COMMON_ROLE_PAGES.USER_INFO:
 				return 	<UserInfo
 							doChangeUserPassword   = {this.props.doChangeUserPassword}
@@ -74,50 +87,16 @@ export default class OwnersHomePage extends Component{
 							doSetHomePage          = {this.setHomePage}
 							doUpdateUserInfo       = {this.props.doUpdateUserInfo}
 							doGetLoggedInformation = {this.props.doGetLoggedInformation} />;
-			case Constants.OWNER_ROLE_PAGES.RESTAURANT_INFO:
-				return 	<OwnersRestaurant
-							doUseFirebaseObject    = {this.props.doUseFirebaseObject}
-							doSendAReportMessage   = {this.props.doSendAReportMessage}
-							doSetHomePage          = {this.setHomePage}
+			case Constants.USER_ROLE_PAGES.RESTAURANT_DETAILS:
+				return 	<RestaurantDetailsPage
 							doSetLoggedInformation = {this.props.doSetLoggedInformation}
-							doGetLoggedInformation = {this.props.doGetLoggedInformation} />;
-			case Constants.OWNER_ROLE_PAGES.RESTAURANT_LOCATION:
-				return 	<OwnersLocation 
-							doSetRestaurantAddress = {this.props.doSetRestaurantAddress}
-							doSendAReportMessage   = {this.props.doSendAReportMessage}
-							doGetUsersLocation     = {this.props.doGetUsersLocation}
-							doSetHomePage          = {this.setHomePage} />;
-			case Constants.OWNER_ROLE_PAGES.ADD_FOOD_MENU:
-				return 	<AddFoodMenu 
-							doAddANewDish          = {this.props.doAddANewDish}
-							doSendAReportMessage   = {this.props.doSendAReportMessage}
-							doSetHomePage          = {this.setHomePage} />;
-			case Constants.OWNER_ROLE_PAGES.VIEW_FOOD_MENU:
-				return 	<FoodMenu
-							doDeleteADishMenu      = {this.props.doDeleteADishMenu}
 							doUseFirebaseObject    = {this.props.doUseFirebaseObject}
 							doGetLoggedInformation = {this.props.doGetLoggedInformation}
-							doSetHomePage          = {this.setHomePage} />;
-			case Constants.OWNER_ROLE_PAGES.BOOKED_USERS:
-				return 	<Booked
 							doSendAReportMessage   = {this.props.doSendAReportMessage}
-							doUseFirebaseObject    = {this.props.doUseFirebaseObject}
-							doGetLoggedInformation = {this.props.doGetLoggedInformation}
-							doSetHomePage          = {this.setHomePage} />;
+							doGetRestaurantDetails = {this.state.pressedRestaurantDetails}
+							doSetHomePage          = {this.setHomePage}/>;
 			case Constants.COMMON_ROLE_PAGES.SEND_A_REPORT:
 				return 	<SendAReport
-							doSendAReportMessage   = {this.props.doSendAReportMessage}
-							doUseFirebaseObject    = {this.props.doUseFirebaseObject}
-							doGetLoggedInformation = {this.props.doGetLoggedInformation}
-							doSetHomePage          = {this.setHomePage}/>;
-			case Constants.OWNER_ROLE_PAGES.EDIT_PRICE_RANGE:
-				return 	<PriceRange
-							doSendAReportMessage   = {this.props.doSendAReportMessage}
-							doUseFirebaseObject    = {this.props.doUseFirebaseObject}
-							doGetLoggedInformation = {this.props.doGetLoggedInformation}
-							doSetHomePage          = {this.setHomePage}/>;
-			case Constants.OWNER_ROLE_PAGES.FEEDBACKS_LIST:
-				return 	<FeedbacksList
 							doSendAReportMessage   = {this.props.doSendAReportMessage}
 							doUseFirebaseObject    = {this.props.doUseFirebaseObject}
 							doGetLoggedInformation = {this.props.doGetLoggedInformation}
@@ -125,11 +104,11 @@ export default class OwnersHomePage extends Component{
 		}
 	}
 
-	OwnerHomePageTabs = ()=>{
-		if(this.state.ownerRoleOperation == Constants.COMMON_ROLE_PAGES.USER_INFO
-			|| this.state.ownerRoleOperation == Constants.OWNER_ROLE_PAGES.LANDING_PAGE
-			|| this.state.ownerRoleOperation == Constants.OWNER_ROLE_PAGES.RESTAURANT_INFO
-			|| this.state.ownerRoleOperation == Constants.OWNER_ROLE_PAGES.BOOKED_USERS ){
+	UserHomePageTabs = ()=>{
+		if(this.state.userRoleOperation == Constants.COMMON_ROLE_PAGES.USER_INFO
+			|| this.state.userRoleOperation == Constants.USER_ROLE_PAGES.LANDING_PAGE 
+			|| this.state.userRoleOperation == Constants.USER_ROLE_PAGES.BOOKINGS
+			|| this.state.userRoleOperation == Constants.USER_ROLE_PAGES.REQUESTS ){
 			return 	<View style={{
 							height: '13.5%',
 							width:'100%',
@@ -153,10 +132,10 @@ export default class OwnersHomePage extends Component{
 								shadowOpacity: 0.34,
 								shadowRadius: 6.27,
 								elevation: 10,
-							     backgroundColor: '#fff'
+							    backgroundColor: '#fff'
 						}}>
 							<TouchableWithoutFeedback
-								onPress={()=>this.setHomePage(Constants.OWNER_ROLE_PAGES.LANDING_PAGE)}>
+								onPress={()=>this.setHomePage(Constants.USER_ROLE_PAGES.LANDING_PAGE)}>
 								<Text style={{
 										height:'100%',
 										width:'100%',
@@ -165,7 +144,7 @@ export default class OwnersHomePage extends Component{
 										textAlignVertical:'center',
 										color: '#000',
 										fontWeight:'bold',
-										fontSize: 11
+										fontSize: 10
 								}}>
 									<Icon
 										style={{fontSize:35}}
@@ -191,10 +170,10 @@ export default class OwnersHomePage extends Component{
 								shadowOpacity: 0.34,
 								shadowRadius: 6.27,
 								elevation: 10,
-							     backgroundColor: '#fff'
+							    backgroundColor: '#fff'
 						}}>
 							<TouchableWithoutFeedback
-								onPress={()=>this.setHomePage(Constants.OWNER_ROLE_PAGES.RESTAURANT_INFO)}> 
+								onPress={()=>this.setHomePage(Constants.USER_ROLE_PAGES.REQUESTS)}> 
 								<Text style={{
 										height:'100%',
 										width:'100%',
@@ -203,12 +182,12 @@ export default class OwnersHomePage extends Component{
 										textAlignVertical:'center',
 										color: '#000',
 										fontWeight:'bold',
-										fontSize: 9
+										fontSize: 10
 								}}>
 									<Icon
 										style={{fontSize:35}}
-										name = 'ios-restaurant'
-										type = 'Ionicons'/>{'\nRestaurant'}
+										name = 'add-to-list'
+										type = 'Entypo'/>{'\nRequests'}
 								</Text>
 							</TouchableWithoutFeedback>
 						</View>
@@ -231,7 +210,7 @@ export default class OwnersHomePage extends Component{
 							    backgroundColor: '#fff'
 						}}>
 							<TouchableWithoutFeedback
-								onPress={()=>this.setHomePage(Constants.OWNER_ROLE_PAGES.BOOKED_USERS)}> 
+								onPress={()=>this.setHomePage(Constants.USER_ROLE_PAGES.BOOKINGS)}> 
 								<Text style={{
 										height:'100%',
 										width:'100%',
@@ -245,10 +224,11 @@ export default class OwnersHomePage extends Component{
 									<Icon
 										style={{fontSize:35}}
 										name = 'bookmarks'
-										type = 'Entypo'/>{'\nBooking'}
+										type = 'Entypo'/>{'\nBooked'}
 								</Text>
 							</TouchableWithoutFeedback>
-						</View>
+						</View>	
+
 						<View style={{
 								height:65,
 								width: 65,
@@ -263,8 +243,8 @@ export default class OwnersHomePage extends Component{
 								},
 								shadowOpacity: 0.34,
 								shadowRadius: 6.27,
-								elevation: 11,
-							     backgroundColor: '#fff'
+								elevation: 10,
+							    backgroundColor: '#fff'
 						}}>
 							<TouchableWithoutFeedback
 								onPress={()=>this.setHomePage(Constants.COMMON_ROLE_PAGES.USER_INFO)}>
@@ -293,8 +273,8 @@ export default class OwnersHomePage extends Component{
 	render() {
 	    return (
 	    	<React.Fragment>
-	    		{this.OwnerHomePageDisplay()}
-	    		{this.OwnerHomePageTabs()}
+	    		{this.UserHomePageDisplay()}
+	    		{this.UserHomePageTabs()}
 	    	</React.Fragment>
 		);
   	}

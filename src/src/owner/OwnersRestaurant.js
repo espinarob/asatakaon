@@ -510,43 +510,6 @@ export default class OwnersRestaurant extends Component{
 		    					</Text>
 		    				</View>
 		    				<View style = {{
-		    						height: 62,
-		    						width: '90%',
-		    						position: 'relative',
-		    						flexDirection: 'row',
-		    						marginBottom: 3
-		    				}}>
-		    					<Text style = {{
-		    							height: '100%',
-		    							width: '30%',
-		    							position: 'relative',
-		    							textAlign: 'center',
-		    							textAlignVertical: 'center',
-		    							fontSize : 14,
-		    							color: '#000'
-		    					}}>
-		    						Present Rating:
-		    					</Text>
-		    					<Text style = {{
-		    							height: '100%',
-		    							width: '57%',
-		    							position: 'relative',
-		    							textAlignVertical: 'center',
-		    							fontSize : 12.5,
-		    							color: '#000',
-		    							paddingLeft: '2%',
-		    							fontWeight: 'bold'
-		    					}}>
-		    						{
-		    							this.props.doGetLoggedInformation.rate ? 
-		    							(Number(this.props.doGetLoggedInformation.rate)/Number(this.props.doGetLoggedInformation.rateCount)
-		    								+'/5 rated by '+this.props.doGetLoggedInformation.rateCount + ' users')
-		    							:
-		    							'Not yet rated by any users'
-		    						}
-		    					</Text>
-		    				</View>
-		    				<View style = {{
 		    						height: 50,
 		    						width: '90%',
 		    						position: 'relative',
@@ -683,40 +646,7 @@ export default class OwnersRestaurant extends Component{
 			    					</Text>
 			    				</TouchableWithoutFeedback>
 		    				</View>
-		    				<View style = {{
-		    						height: 50,
-		    						width: '90%',
-		    						position: 'relative',
-		    						top:30,
-		    						paddingBottom: 5,
-		    						alignItems: 'center'
-		    				}}>
-		    					<TouchableWithoutFeedback
-		    						onPress = {()=>this.props.doSetHomePage(Constants.OWNER_ROLE_PAGES.FEEDBACKS_LIST)}>
-			    					<Text style={{
-			    							height: '90%',
-					    					width:'50%',
-					    					position:'relative',
-					    					borderColor: '#ddd',
-										    borderBottomWidth: 0,
-										    shadowColor: '#000',
-										    shadowOffset: {
-												width: 0,
-												height: 2,
-											},
-											shadowOpacity: 0.34,
-											elevation: 6,
-										    backgroundColor: '#fff',
-										    textAlignVertical: 'center',
-										    textAlign: 'center',
-										    fontWeight :'bold',
-										    borderRadius : 15,
-										    color: '#000'
-			    					}}>
-			    						View Feedbacks
-			    					</Text>
-			    				</TouchableWithoutFeedback>
-		    				</View>
+
 	    				</ScrollView>
 	    				<Text 
 			    			style={{

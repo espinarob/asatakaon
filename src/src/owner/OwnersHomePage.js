@@ -32,7 +32,6 @@ import AddFoodMenu       from './AddFoodMenu.js';
 import FoodMenu          from './FoodMenu.js';
 import Booked            from './Booked.js';
 import PriceRange        from './PriceRange.js';
-import FeedbacksList     from './FeedbacksList.js';
 
 export default class OwnersHomePage extends Component{
 
@@ -112,12 +111,6 @@ export default class OwnersHomePage extends Component{
 							doSetHomePage          = {this.setHomePage}/>;
 			case Constants.OWNER_ROLE_PAGES.EDIT_PRICE_RANGE:
 				return 	<PriceRange
-							doSendAReportMessage   = {this.props.doSendAReportMessage}
-							doUseFirebaseObject    = {this.props.doUseFirebaseObject}
-							doGetLoggedInformation = {this.props.doGetLoggedInformation}
-							doSetHomePage          = {this.setHomePage}/>;
-			case Constants.OWNER_ROLE_PAGES.FEEDBACKS_LIST:
-				return 	<FeedbacksList
 							doSendAReportMessage   = {this.props.doSendAReportMessage}
 							doUseFirebaseObject    = {this.props.doUseFirebaseObject}
 							doGetLoggedInformation = {this.props.doGetLoggedInformation}

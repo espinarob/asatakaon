@@ -22,62 +22,31 @@ import {
 import Constants   from './Constants.js';
 
 
-export default class SendAReport extends Component{
+export default class ChangePassword extends Component{
 
 	state = {
-		inputMessage : '',
-		inputSubject : ''
+		currentPassword    : '',
+		newPassword        : '',
+		confirmNewPassword : ''
 	}
 
-	sendReportMessage = ()=>{
-		if(this.state.inputSubject.length == 0){
-			this.props.doSendAReportMessage('Subject message must not be blank');
-			setTimeout(()=>{
-				this.props.doSendAReportMessage('');
-			},Constants.REPORT_DISPLAY_TIME);
+	submitChangePassword = ()=>{
+		if(this.state.currentPassword!=this.props.doGetLoggedInformation.password){
+			this.props.doSendAReportMessage('Current password input is incorrect');
+			setTimeout(()=>this.props.doSendAReportMessage(''),Constants.REPORT_DISPLAY_TIME);	
 		}
-		else if(this.state.inputMessage.length == 0){
-			this.props.doSendAReportMessage('Content must not be left blank');
-			setTimeout(()=>{
-				this.props.doSendAReportMessage('');
-			},Constants.REPORT_DISPLAY_TIME);
+		else if(this.state.newPassword!=this.state.confirmNewPassword){
+			this.props.doSendAReportMessage('New password inputs does not match');
+			setTimeout(()=>this.props.doSendAReportMessage(''),Constants.REPORT_DISPLAY_TIME);
 		}
 		else{
-			this.props.doSendAReportMessage('Sending message, please wait..');
-			const messageKey = 	this.props.doUseFirebaseObject
-									.database()
-									.ref("ADMIN_MESSAGES")
-									.push();
-			messageKey
-				.update({
-					'key'       : messageKey.key,
-					'subject'   : this.state.inputSubject,
-					'message'   : this.state.inputMessage,
-					'sender'    : (String(this.props.doGetLoggedInformation.firstName)
-									+ ' '
-									+ String(this.props.doGetLoggedInformation.lastName)),
-					'senderKey' : this.props.doGetLoggedInformation.accountID,
-					'email'     : this.props.doGetLoggedInformation.email
-				})
-				.then(()=>{
-					this.props.doSetHomePage(Constants.COMMON_ROLE_PAGES.USER_INFO);
-					this.props.doSendAReportMessage('Sent');
-					setTimeout(()=>{
-						this.props.doSendAReportMessage('');
-					},Constants.REPORT_DISPLAY_TIME);
-				})
-				.catch((error)=>{
-					this.props.doSendAReportMessage('Error in connecting to the server');
-					setTimeout(()=>{
-						this.props.doSendAReportMessage('');
-					},Constants.REPORT_DISPLAY_TIME);
-				});
+			this.props.doChangeUserPassword(this.state.newPassword);
 		}
 	}
 
-	render(){
-		return(
-			<React.Fragment>
+	render() {
+	    return (
+			   	<React.Fragment>
 	    		<View style={{
 	    				height:'100%',
 	    				width:'100%',
@@ -131,7 +100,7 @@ export default class SendAReport extends Component{
 	    						color:'#000',
 	    						left: '53%'
 	    				}}>
-	    					Send Report
+	    					Change Password
 	    				</Text>
 	    			</View>
 
@@ -166,26 +135,27 @@ export default class SendAReport extends Component{
 		    					fontWeight: 'bold',
 		    					color: '#000'
 		    			}}>
-		    				Report Subject
+		    				Current Password
 		    			</Text>
+
 		    			<View style={{
 		    					height:'15%',
-		    					width: '70%',
+		    					width: '60%',
 		    					borderRadius: 100,
 		    					position: 'relative',
 		    					borderWidth:2,
 		    					alignItems:'center'
 		    			}}>
 		    				<TextInput
-		    					maxLength = {Constants.CREDENTIALS_POLICY.MAX_REPORT_SUBJECT}
-		    					placeholder = 'Message Subject'
+		    					secureTextEntry={true}
+		    					placeholder = '*********'
 		    					style={{
 		    						width:'90%',
 		    						height:'100%',
 		    						textAlign:'center',
 		    						textAlignVertical:'center'
 		    					}}
-		    					onChangeText={(inputSubject)=>this.setState({inputSubject})}/>
+		    					onChangeText={(currentPassword)=>this.setState({currentPassword})}/>
 		    			</View>
 
 		    			<Text style={{
@@ -197,32 +167,67 @@ export default class SendAReport extends Component{
 		    					fontWeight: 'bold',
 		    					color: '#000'
 		    			}}>
-		    				Report Content
+		    				New Password
 		    			</Text>
+
 		    			<View style={{
-		    					height:'40%',
-		    					width: '70%',
-		    					borderRadius: 15,
+		    					height:'15%',
+		    					width: '60%',
+		    					borderRadius: 100,
 		    					position: 'relative',
 		    					borderWidth:2,
 		    					alignItems:'center'
 		    			}}>
 		    				<TextInput
-              					multiline={true}
-		    					maxLength = {Constants.CREDENTIALS_POLICY.MAX_REPORT_CONTENT}
+		    					maxLength = {Constants.CREDENTIALS_POLICY.MAX_PASSWORD}
+		    					secureTextEntry={true}
+		    					placeholder = '*********'
 		    					style={{
 		    						width:'90%',
 		    						height:'100%',
-		    						textAlignVertical:'top',
-		    						paddingLeft: '2%'
+		    						textAlign:'center',
+		    						textAlignVertical:'center'
 		    					}}
-		    					onChangeText={(inputMessage)=>this.setState({inputMessage})}/>
+		    					onChangeText={(newPassword)=>this.setState({newPassword})}/>
+		    			</View>
+
+		    			<Text style={{
+		    					height:'9.5%',
+		    					width:'70%',
+		    					textAlign:'center',
+		    					textAlignVertical:'center',
+		    					fontSize: 16,
+		    					fontWeight: 'bold',
+		    					color: '#000'
+		    			}}>
+		    				Confirm New Password
+		    			</Text>
+
+		    			<View style={{
+		    					height:'15%',
+		    					width: '60%',
+		    					borderRadius: 100,
+		    					position: 'relative',
+		    					borderWidth:2,
+		    					alignItems:'center'
+		    			}}>
+		    				<TextInput
+		    					maxLength = {Constants.CREDENTIALS_POLICY.MAX_PASSWORD}
+		    					secureTextEntry={true}
+		    					placeholder = '*********'
+		    					style={{
+		    						width:'90%',
+		    						height:'100%',
+		    						textAlign:'center',
+		    						textAlignVertical:'center'
+		    					}}
+		    					onChangeText={(confirmNewPassword)=>this.setState({confirmNewPassword})}/>
 		    			</View>
 		    			<TouchableWithoutFeedback
-		    				onPress = {()=>this.sendReportMessage()}>
+		    				onPress={()=>this.submitChangePassword()}>
 			    			<Text style={{
-			    					height: '15%',
-			    					width:'45%',
+			    					height: '17%',
+			    					width:'50%',
 			    					position:'relative',
 			    					textAlignVertical:'center',
 			    					textAlign:'center',
@@ -244,14 +249,14 @@ export default class SendAReport extends Component{
 									shadowRadius: 6.27,
 									elevation: 10,
 								    backgroundColor: '#fff',
-								    fontSize: 15
+								    fontSize: 18
 			    			}}>
 			    				Submit
 			    			</Text>
 			    		</TouchableWithoutFeedback>
 		    		</View>
 	    		</View>
-			</React.Fragment>
-		);	
+	    	</React.Fragment>
+    	);
 	}
 }
