@@ -24,7 +24,6 @@ import {Marker}      from 'react-native-maps';
 
 import Constants from './Constants.js';
 const anonymousUserIcon = require('../img/icon/anonymous-user.png');
-const restaurantIcon    = require('../img/icon/restaurant-own.png');
 
 export default class FindRestaurant extends Component{
 
@@ -40,21 +39,14 @@ export default class FindRestaurant extends Component{
 
 	onLoadIcon = ()=>{
 		if(anonymousUserIcon){
-			setTimeout(()=>{
+			const timeoutID = setTimeout(()=>{
 				this.setState({tracksViewChangesUserIcon:false});
 				console.log('set to false');
 			},1500);
+			clearTimeout(timeoutID);
 		}
 	}
 
-	onLoadRestaurantIcon = ()=>{
-		if(restaurantIcon && this.state.tracksViewChangesResIcon!=false){
-			setTimeout(()=>{
-				this.setState({tracksViewChangesResIcon:false});
-				console.log('set to false');
-			},1500)
-		}
-	}
 
 	componentDidMount(){
 		this.getAllRegisteredRestaurants();
@@ -65,6 +57,8 @@ export default class FindRestaurant extends Component{
 			.database()
 			.ref("RESTAURANT/")
 			.off("value",this.state.restaurantObjectListener);
+		clearTimeout();
+		clearInterval();
 	}
 
 	getAllRegisteredRestaurants = ()=>{
@@ -116,10 +110,20 @@ export default class FindRestaurant extends Component{
 					      	description = {'Operating hours: '
 					      		+restaurant.startingHour
 					      		+'-'+restaurant.closingHour} >
-					      	<Image
-					      		onLoad={this.onLoadRestaurantIcon}
-					      		source={restaurantIcon}
-					      		style={{height:40,width:40}}/>
+				      		<Text
+				      			style = {{
+				      				paddingTop: 10,
+				      				paddingBottom: 10,
+				      				fontSize: 14,
+				      				fontWeight: 'bold',
+				      				color: '#fff',
+				      				paddingLeft: 10,
+				      				paddingRight: 10,
+				      				backgroundColor: '#e21242',
+				      				borderRadius :10 
+				      			}}>
+			      				{restaurant.restaurantName}
+				      		</Text>
 				      	</Marker>;
 			}
 		});
@@ -132,7 +136,7 @@ export default class FindRestaurant extends Component{
 			            region = {{
 			                latitude       : this.props.doGetUsersLocation.latitude,
 			                longitude      : this.props.doGetUsersLocation.longitude,
-			                latitudeDelta  : 0.0922*1,
+			                latitudeDelta  : 0.0922*0.9,
 			                longitudeDelta : 0.0421*1,
 		                }}>
 		                <Marker

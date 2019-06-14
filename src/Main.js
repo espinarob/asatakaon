@@ -695,6 +695,10 @@ export default class Main extends Component{
 		this.askUserGPSPermission();
 	}
 
+	componentDidUpdate(){
+		clearTimeout();
+	}
+
 	signOutAccount = ()=>{
 		this.setState({loadingText:Constants.LOADING_TEXT.LOGGING_OUT});
 		this.changeMainApplicationDisplay(Constants.APP_PAGES.LOADING_SCREEN_APP);

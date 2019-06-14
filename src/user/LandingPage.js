@@ -67,6 +67,8 @@ export default class UserHomePage extends Component{
 			.database()
 			.ref("USERS/"+String(this.props.doGetLoggedInformation.accountID))
 			.off("value",this.state.accountFirebaseObject);
+		clearInterval();
+		clearTimeout();
 	}
 
 	listenToAccountChanges = ()=>{
@@ -308,10 +310,20 @@ export default class UserHomePage extends Component{
 					      	description = {'Operating hours: '
 					      		+restaurant.startingHour
 					      		+'-'+restaurant.closingHour} >
-					      	<Image
-					      		onLoad={this.onLoadRestaurantIcon}
-					      		source={restaurantIcon}
-					      		style={{height:40,width:40}}/>
+					      	<Text
+				      			style = {{
+				      				paddingTop: 10,
+				      				paddingBottom: 10,
+				      				fontSize: 14,
+				      				fontWeight: 'bold',
+				      				color: '#fff',
+				      				paddingLeft: 10,
+				      				paddingRight: 10,
+				      				backgroundColor: '#e21242',
+				      				borderRadius :10 
+				      			}}>
+			      				{restaurant.restaurantName}
+				      		</Text>
 				      	</Marker>;
 			}
 		});
