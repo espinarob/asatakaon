@@ -26,6 +26,7 @@ import AddFoodEstablishment from "./add/AddFoodEstablishment.js";
 import LoginPage from "./login/LoginPage.js";
 import RegistrationPage from "./registration/RegistrationPage.js";
 import HomeDashboard from "./commons/HomeDashboard.js";
+import Manual from "./commons/Manual.js";
 
 export default class Main extends Component {
   state = {
@@ -1043,6 +1044,10 @@ export default class Main extends Component {
             doGetUsersLocation={this.state.usersLocation}
             doChangeMainAppDisplay={this.changeMainApplicationDisplay}
           />
+        );
+      case Constants.APP_PAGES.OUR_MANUAL:
+        return (
+          <Manual doChangeMainAppDisplay={this.changeMainApplicationDisplay} />
         );
       case Constants.APP_PAGES.LOGIN_APP_PAGE:
         return (

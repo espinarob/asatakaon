@@ -1,29 +1,20 @@
 import React, { Component } from "react";
 import {
-  Platform,
-  StyleSheet,
   Text,
   View,
-  AsyncStorage,
   Image,
-  NetInfo,
   TouchableWithoutFeedback,
   TextInput,
-  FlatList,
-  Picker,
-  CheckBox
+  FlatList
 } from "react-native";
-import { Container, Icon, Spinner } from "native-base";
-import SyncStorage from "sync-storage";
+import { Icon } from "native-base";
 import MapView from "react-native-maps";
-import { Marker, Polyline } from "react-native-maps";
-import Geolocation from "react-native-geolocation-service";
+import { Marker } from "react-native-maps";
 import getDirections from "react-native-google-maps-directions";
 /* -- Custom Components  -- */
 import Constants from "../commons/Constants.js";
 
 const registeredUserIcon = require("../img/icon/anonymous-user.png");
-const restaurantIcon = require("../img/icon/restaurant-own.png");
 
 export default class UserHomePage extends Component {
   state = {
@@ -904,7 +895,9 @@ export default class UserHomePage extends Component {
           : ""
       }`;
       if (
-        availableString.indexOf(stringToSearch) >= 0 &&
+        String(availableString)
+          .toLowerCase()
+          .indexOf(stringToSearch) >= 0 &&
         stringToSearch.length !== 0 &&
         res.placeStatus == Constants.RESTAURANT_PLACE_STATUS.ACCEPTED &&
         res.location

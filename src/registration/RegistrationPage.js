@@ -1,20 +1,14 @@
 import React, { Component } from "react";
 import {
-  Platform,
-  StyleSheet,
   Text,
   View,
-  AsyncStorage,
-  Image,
-  NetInfo,
   TouchableWithoutFeedback,
   TextInput,
   Picker,
   CheckBox,
   ScrollView
 } from "react-native";
-import { Container, Icon, Spinner } from "native-base";
-import SyncStorage from "sync-storage";
+import { Icon } from "native-base";
 
 /* -- Custom Components  -- */
 
