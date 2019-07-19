@@ -41,6 +41,7 @@ export default class SendAReport extends Component {
         .push();
       messageKey
         .update({
+          status: "new",
           key: messageKey.key,
           subject: this.state.inputSubject,
           message: this.state.inputMessage,

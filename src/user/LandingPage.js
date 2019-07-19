@@ -138,7 +138,7 @@ export default class UserHomePage extends Component {
               });
             }
           });
-          this.setState({ allNotifications: initAllNotifications });
+          this.reverseNotification(initAllNotifications);
         } else {
           this.setState({
             allNotifications: [],
@@ -148,6 +148,14 @@ export default class UserHomePage extends Component {
         }
       });
     this.setState({ notificationObjectListener: notificationObjectListener });
+  };
+
+  reverseNotification = notifs => {
+    const reverseArray = [];
+    for (let index = notifs.length - 1; index >= 0; index--) {
+      reverseArray.push(notifs[index]);
+    }
+    this.setState({ allNotifications: reverseArray });
   };
 
   getAllRegisteredRestaurants = () => {

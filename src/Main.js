@@ -88,7 +88,6 @@ export default class Main extends Component {
                     email: userData.email,
                     username: userData.username,
                     password: userData.password,
-                    gender: userData.gender,
                     accountID: String(userKey.key),
                     role: String(Constants.ROLES.USER_ONLY),
                     status: Constants.ACCOUNT_USER_STATUS.ACCEPTED
@@ -227,6 +226,39 @@ export default class Main extends Component {
                                 acceptBooking: "false"
                               })
                               .then(() => {
+                                const today = new Date();
+                                const hour =
+                                  today.getHours() > 12
+                                    ? Number(today.getHours() - 12)
+                                    : today.getHours() == 0
+                                    ? "12"
+                                    : today.getHours();
+                                const AMorPM =
+                                  today.getHours() > 11 ? "PM" : "AM";
+                                const StringDate =
+                                  String(hour) +
+                                  ":" +
+                                  (Number(today.getMinutes()) > 9
+                                    ? String(today.getMinutes())
+                                    : "0" + String(today.getMinutes())) +
+                                  " " +
+                                  String(AMorPM) +
+                                  " " +
+                                  String(today.getMonth() + 1) +
+                                  "/" +
+                                  String(today.getDate()) +
+                                  "/" +
+                                  String(today.getFullYear());
+                                const adminNotifKey = firebase
+                                  .database()
+                                  .ref("ADMIN_NOTIFS")
+                                  .push();
+                                adminNotifKey.update({
+                                  date: today.toTimeString(),
+                                  status: "new",
+                                  registered: "restaurant",
+                                  key: String(adminNotifKey.key)
+                                });
                                 this.sendAReportMessage(
                                   "You have been successfully registered!"
                                 );

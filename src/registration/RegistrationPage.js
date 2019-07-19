@@ -23,13 +23,8 @@ export default class RegistrationPage extends Component {
     inputUsername: "",
     inputPassword: "",
     inputConfirmPass: "",
-    inputGender: "Male",
     termsFlag: false,
     submitted: false
-  };
-
-  onGenderChange = (ItemValue, ItemIndex) => {
-    this.setState({ inputGender: ItemValue });
   };
 
   checkBoxForTerms = () => {
@@ -125,8 +120,7 @@ export default class RegistrationPage extends Component {
         address: this.state.inputAddress,
         email: this.state.inputEmail,
         username: this.state.inputUsername,
-        password: this.state.inputPassword,
-        gender: this.state.inputGender
+        password: this.state.inputPassword
       };
       this.setState({ submitted: true });
       setTimeout(() => {
@@ -393,49 +387,6 @@ export default class RegistrationPage extends Component {
                   onChangeText={inputEmail => this.setState({ inputEmail })}
                 />
               </View>
-
-              <Text
-                style={{
-                  height: 23,
-                  width: 120,
-                  position: "relative",
-                  textAlign: "center",
-                  fontSize: 16,
-                  fontWeight: "bold",
-                  color: "#000"
-                }}
-              >
-                Gender
-              </Text>
-
-              <View
-                style={{
-                  height: 40,
-                  width: 170,
-                  position: "relative",
-                  borderRadius: 100,
-                  borderWidth: 2,
-                  borderColor: "#000"
-                }}
-              >
-                <Picker
-                  style={{
-                    height: "100%",
-                    width: "100%",
-                    position: "relative"
-                  }}
-                  onValueChange={this.onGenderChange}
-                  selectedValue={this.state.inputGender}
-                >
-                  <Picker.Item label={"Male"} value={"Male"} />
-                  <Picker.Item label={"Female"} value={"Female"} />
-                  <Picker.Item
-                    label={"Rather not say"}
-                    value={"Rather not say"}
-                  />
-                </Picker>
-              </View>
-
               <Text
                 style={{
                   height: 23,
