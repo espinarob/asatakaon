@@ -13,6 +13,7 @@ import { Marker } from "react-native-maps";
 import getDirections from "react-native-google-maps-directions";
 /* -- Custom Components  -- */
 import Constants from "../commons/Constants.js";
+import geolib from "geolib";
 
 const registeredUserIcon = require("../img/icon/anonymous-user.png");
 
@@ -317,45 +318,41 @@ export default class UserHomePage extends Component {
 
   displayAllApprovedRestaurants = () => {
     const approvedRestaurants = [];
+    const usersLat = this.props.doGetUsersLocation.latitude;
+    const usersLong = this.props.doGetUsersLocation.longitude;
+
     this.state.registeredRestaurants.forEach(restaurant => {
       if (
         restaurant.placeStatus == Constants.RESTAURANT_PLACE_STATUS.ACCEPTED &&
         restaurant.location
       ) {
         const jsonLocation = JSON.parse(JSON.stringify(restaurant.location));
-        approvedRestaurants.push(
-          <Marker
-            onPress={() => this.containPressRestaurantDetails(restaurant)}
-            tracksViewChanges={false}
-            coordinate={{
-              latitude: jsonLocation.latitude,
-              longitude: jsonLocation.longitude
-            }}
-            title={restaurant.restaurantName}
-            description={
-              "Operating hours: " +
-              restaurant.startingHour +
-              "-" +
-              restaurant.closingHour
+        const distance = Number(
+          geolib.getDistance(
+            {
+              latitude: Number(jsonLocation.latitude),
+              longitude: Number(jsonLocation.longitude)
+            },
+            {
+              latitude: Number(usersLat),
+              longitude: Number(usersLong)
             }
-          >
-            <Text
-              style={{
-                paddingTop: 10,
-                paddingBottom: 10,
-                fontSize: 14,
-                fontWeight: "bold",
-                color: "#fff",
-                paddingLeft: 10,
-                paddingRight: 10,
-                backgroundColor: "#e21242",
-                borderRadius: 10
-              }}
-            >
-              {restaurant.restaurantName}
-            </Text>
-          </Marker>
+          )
         );
+        console.log(distance);
+        if (distance <= 1000)
+          approvedRestaurants.push(
+            <Marker
+              onPress={() => this.containPressRestaurantDetails(restaurant)}
+              tracksViewChanges={false}
+              coordinate={{
+                latitude: jsonLocation.latitude,
+                longitude: jsonLocation.longitude
+              }}
+              title={restaurant.restaurantName}
+              description={restaurant.restaurantName}
+            />
+          );
       }
     });
     return approvedRestaurants;
@@ -664,7 +661,7 @@ export default class UserHomePage extends Component {
           region={{
             latitude: this.props.doGetUsersLocation.latitude,
             longitude: this.props.doGetUsersLocation.longitude,
-            latitudeDelta: 0.0722 * 0.2,
+            latitudeDelta: 0.0622 * 0.2,
             longitudeDelta: 0.0321 * 0.3
           }}
         >

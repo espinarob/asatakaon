@@ -110,6 +110,16 @@ export default class AddFoodEstablishment extends Component {
       setTimeout(() => {
         this.props.doSendAReportMessage("");
       }, Constants.REPORT_DISPLAY_TIME);
+    } else if (
+      String(this.state.inputStartingHour).toLowerCase() ===
+      String(this.state.inputClosingHour).toLowerCase()
+    ) {
+      this.props.doSendAReportMessage(
+        "Opening and Closing time should not be equal"
+      );
+      setTimeout(() => {
+        this.props.doSendAReportMessage("");
+      }, Constants.REPORT_DISPLAY_TIME);
     } else {
       const restaurantData = {
         restaurantName: this.state.inputRestaurantName,
