@@ -1092,6 +1092,7 @@ export default class Main extends Component {
       case Constants.APP_PAGES.SIGN_APP_PAGE:
         return (
           <RegistrationPage
+            doUseFirebaseObject={firebase}
             doRegisterUser={this.registerUserCredentials}
             doSendAReportMessage={this.sendAReportMessage}
             doChangeMainAppDisplay={this.changeMainApplicationDisplay}
@@ -1100,6 +1101,7 @@ export default class Main extends Component {
       case Constants.APP_PAGES.SIGN_RESTAURANT:
         return (
           <AddFoodEstablishment
+            doUseFirebaseObject={firebase}
             doRegisterRestaurant={this.registrationRestaurantCredential}
             doChangeMainAppDisplay={this.changeMainApplicationDisplay}
             doSendAReportMessage={this.sendAReportMessage}

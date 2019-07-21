@@ -46,7 +46,68 @@ export default class AddFoodEstablishment extends Component {
     return re.test(String(email).toLowerCase());
   };
 
-  submitFoodEstablishment = () => {
+  iterateOnAvailableAcc = () => {
+    return new Promise((resolve, reject) => {
+      this.props.doUseFirebaseObject
+        .database()
+        .ref("USERS/")
+        .once("value", snapshot => {
+          if (snapshot.exists()) {
+            const allUserWithKey = JSON.parse(JSON.stringify(snapshot.val()));
+            Object.keys(allUserWithKey).forEach(userkey => {
+              const user = allUserWithKey[userkey];
+              const username = String(user.username).toLowerCase();
+              if (username === String(this.state.inputUsername).toLowerCase())
+                resolve(false);
+            });
+            this.props.doUseFirebaseObject
+              .database()
+              .ref("RESTAURANT/")
+              .once("value", snapshot => {
+                if (snapshot.exists()) {
+                  const allResWithKey = JSON.parse(
+                    JSON.stringify(snapshot.val())
+                  );
+                  Object.keys(allResWithKey).forEach(reskey => {
+                    const restau = allResWithKey[reskey];
+                    const username = String(restau.username).toLowerCase();
+                    if (
+                      username ===
+                      String(this.state.inputUsername).toLowerCase()
+                    )
+                      resolve(false);
+                  });
+                  resolve(true);
+                } else resolve(true);
+              });
+          } else {
+            this.props.doUseFirebaseObject
+              .database()
+              .ref("RESTAURANT/")
+              .once("value", snapshot => {
+                if (snapshot.exists()) {
+                  const allResWithKey = JSON.parse(
+                    JSON.stringify(snapshot.val())
+                  );
+                  Object.keys(allResWithKey).forEach(reskey => {
+                    const restau = allResWithKey[reskey];
+                    const username = String(restau.username).toLowerCase();
+                    if (
+                      username ===
+                      String(this.state.inputUsername).toLowerCase()
+                    )
+                      resolve(false);
+                  });
+                  resolve(true);
+                } else resolve(true);
+              });
+          }
+        });
+    });
+  };
+
+  submitFoodEstablishment = async () => {
+    const hasSame = await this.iterateOnAvailableAcc();
     if (this.state.submitted == true) return;
     else if (this.checkUsernameCharacters() == false) {
       this.props.doSendAReportMessage(
@@ -117,6 +178,11 @@ export default class AddFoodEstablishment extends Component {
       this.props.doSendAReportMessage(
         "Opening and Closing time should not be equal"
       );
+      setTimeout(() => {
+        this.props.doSendAReportMessage("");
+      }, Constants.REPORT_DISPLAY_TIME);
+    } else if (hasSame === false) {
+      this.props.doSendAReportMessage("Username already exists");
       setTimeout(() => {
         this.props.doSendAReportMessage("");
       }, Constants.REPORT_DISPLAY_TIME);

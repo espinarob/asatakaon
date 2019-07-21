@@ -40,7 +40,69 @@ export default class RegistrationPage extends Component {
     return re.test(String(email).toLowerCase());
   };
 
-  submitCredentials = () => {
+  iterateOnAvailableAcc = () => {
+    return new Promise((resolve, reject) => {
+      this.props.doUseFirebaseObject
+        .database()
+        .ref("USERS/")
+        .once("value", snapshot => {
+          if (snapshot.exists()) {
+            const allUserWithKey = JSON.parse(JSON.stringify(snapshot.val()));
+            Object.keys(allUserWithKey).forEach(userkey => {
+              const user = allUserWithKey[userkey];
+              const username = String(user.username).toLowerCase();
+              if (username === String(this.state.inputUsername).toLowerCase())
+                resolve(false);
+            });
+            this.props.doUseFirebaseObject
+              .database()
+              .ref("RESTAURANT/")
+              .once("value", snapshot => {
+                if (snapshot.exists()) {
+                  const allResWithKey = JSON.parse(
+                    JSON.stringify(snapshot.val())
+                  );
+                  Object.keys(allResWithKey).forEach(reskey => {
+                    const restau = allResWithKey[reskey];
+                    const username = String(restau.username).toLowerCase();
+                    if (
+                      username ===
+                      String(this.state.inputUsername).toLowerCase()
+                    )
+                      resolve(false);
+                  });
+                  resolve(true);
+                } else resolve(true);
+              });
+          } else {
+            this.props.doUseFirebaseObject
+              .database()
+              .ref("RESTAURANT/")
+              .once("value", snapshot => {
+                if (snapshot.exists()) {
+                  const allResWithKey = JSON.parse(
+                    JSON.stringify(snapshot.val())
+                  );
+                  Object.keys(allResWithKey).forEach(reskey => {
+                    const restau = allResWithKey[reskey];
+                    const username = String(restau.username).toLowerCase();
+                    if (
+                      username ===
+                      String(this.state.inputUsername).toLowerCase()
+                    )
+                      resolve(false);
+                  });
+                  resolve(true);
+                } else resolve(true);
+              });
+          }
+        });
+    });
+  };
+
+  submitCredentials = async () => {
+    const hasSame = await this.iterateOnAvailableAcc();
+
     if (this.state.submitted == true) {
       return;
     } else if (this.checkUsernameCharacters() == false) {
@@ -110,6 +172,11 @@ export default class RegistrationPage extends Component {
       }, Constants.REPORT_DISPLAY_TIME);
     } else if (this.state.termsFlag == false) {
       this.props.doSendAReportMessage("Please agree to terms of our service");
+      setTimeout(() => {
+        this.props.doSendAReportMessage("");
+      }, Constants.REPORT_DISPLAY_TIME);
+    } else if (hasSame === false) {
+      this.props.doSendAReportMessage("Username already exists");
       setTimeout(() => {
         this.props.doSendAReportMessage("");
       }, Constants.REPORT_DISPLAY_TIME);
