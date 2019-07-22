@@ -19,6 +19,7 @@ import geolib from "geolib";
 /* -- Custom Components  -- */
 
 import Constants from "./Constants.js";
+import { resolve4 } from "dns";
 const anonymousUserIcon = require("../img/icon/anonymous-user.png");
 
 export default class FindRestaurant extends Component {
@@ -441,6 +442,9 @@ export default class FindRestaurant extends Component {
   doSearchResults = async () => {
     const stringToSearch = String(this.state.searchInput).toLowerCase();
     const initSearchResults = [];
+    const usersLat = this.props.doGetUsersLocation.latitude;
+    const usersLong = this.props.doGetUsersLocation.longitude;
+
     this.state.registeredRestaurants.forEach(res => {
       let availableString = `${res.restaurantName} ${
         res.location ? res.location.addressName : ""
@@ -449,6 +453,7 @@ export default class FindRestaurant extends Component {
           ? String(res.priceRange.minimum) + String(res.priceRange.maximum)
           : ""
       }`;
+
       if (
         String(availableString)
           .toLowerCase()
@@ -457,7 +462,20 @@ export default class FindRestaurant extends Component {
         res.placeStatus == Constants.RESTAURANT_PLACE_STATUS.ACCEPTED &&
         res.location
       ) {
-        initSearchResults.push(res);
+        const jsonLocation = JSON.parse(JSON.stringify(res.location));
+        const distance = Number(
+          geolib.getDistance(
+            {
+              latitude: Number(jsonLocation.latitude),
+              longitude: Number(jsonLocation.longitude)
+            },
+            {
+              latitude: Number(usersLat),
+              longitude: Number(usersLong)
+            }
+          )
+        );
+        if (distance <= 1000) initSearchResults.push(res);
       }
     });
     await this.setState({ goSearch: true, searchResults: initSearchResults });
